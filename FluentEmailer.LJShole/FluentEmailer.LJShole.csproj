@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>FluentEmailer.LJShole</AssemblyName>
+    <Authors>Lehlohonolo Jairus Shole</Authors>
+    <Description>Fluent API to send emails in a .NET Core application using your own SMTP settings</Description>
+    <Copyright>2021</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/lehlohonolojairus/FluentEmailer</RepositoryUrl>
+    <PackageTags>.NET Core Email, Fluent API , Email</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

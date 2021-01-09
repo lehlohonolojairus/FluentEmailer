@@ -40,6 +40,16 @@ namespace FluentEmailer.LJShole
             _toMailAddresses = mailAddresses;
             return this;
         }
+        public EmailMessage AddCcMailAddresses(List<MailAddress> mailAddresses)
+        {
+            _ccMailAddresses = mailAddresses;
+            return this;
+        }
+        public EmailMessage AddBccMailAddresses(List<MailAddress> mailAddresses)
+        {
+            _bccMailAddresses = mailAddresses;
+            return this;
+        }
         public EmailMessage AddFromMailAddresses(MailAddress mailAddress)
         {
             _fromMailAddress = mailAddress;
