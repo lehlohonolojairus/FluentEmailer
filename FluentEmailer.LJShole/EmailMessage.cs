@@ -1,45 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Mail;
 
 namespace FluentEmailer.LJShole
 {
-    public class EmailMessage
+    public class EmailMessage : IEmailMessage
     {
-        internal EmailTemplate _template;
-        internal Mailer _mailer;
-        internal MailCredentials _mailCredentials;
-        internal string _subject;
-        internal string _body;
-        internal bool _emailBodyIsHtml;
-        internal List<MailAddress> _toMailAddresses = new List<MailAddress>();
-        internal List<MailAddress> _ccMailAddresses = new List<MailAddress>();
-        internal List<MailAddress> _bccMailAddresses = new List<MailAddress>();
-        internal MailAddress _fromMailAddress;
-        internal List<Attachment> _attachments;
+        private EmailTemplate Template;
+        private Mailer Mailer;
+        private IMailCredentials MailCredentials;
+        private string Subject;
+        private string Body;
+        private bool EmailBodyIsHtml;
+        private List<MailAddress> ToMailAddresses = new List<MailAddress>();
+        private List<MailAddress> CcMailAddresses = new List<MailAddress>();
+        private List<MailAddress> BccMailAddresses = new List<MailAddress>();
+        private MailAddress FromMailAddress;
+        private List<Attachment> Attachments;
 
         public EmailMessage(Mailer mailer)
         {
-            _mailer = mailer;
+            Mailer = mailer;
         }
         /// <summary>
-        /// Bootstrapper for setting up the email to send.
+        /// Bootstrapper for setting up the body of the email to be sent.
         /// </summary>
         /// <returns></returns>
-        public EmailTemplate WithBody()
+        public IEmailTemplate WithBody()
         {
-            _template = _template ?? new EmailTemplate(this, _mailer);
-            return _template;
+            Template = Template ?? new EmailTemplate(this, Mailer);
+            return Template;
         }
 
         /// <summary>
         /// Set up SMTP /IMAP server credentials.
         /// </summary>
         /// <returns></returns>
-        public MailCredentials WithCredentials()
+        public IMailCredentials WithCredentials()
         {
-            _mailCredentials = _mailCredentials ?? new MailCredentials(_mailer);
-            return _mailCredentials;
+            MailCredentials = MailCredentials ?? new MailCredentials(Mailer);
+            return MailCredentials;
         }
 
         /// <summary>
@@ -47,12 +48,12 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="subject"></param>
         /// <returns></returns>
-        public EmailMessage WithSubject(string subject)
+        public IEmailMessage WithSubject(string subject)
         {
             if (string.IsNullOrEmpty(subject))
                 throw new ArgumentNullException(nameof(subject));
 
-            _subject = subject;
+            Subject = subject;
             return this;
         }
 
@@ -61,12 +62,12 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="toMailAddresses">List of email addresses to receive the email.</param>
         /// <returns></returns>
-        public EmailMessage AddToMailAddresses(List<MailAddress> toMailAddresses)
+        public IEmailMessage AddToMailAddresses(List<MailAddress> toMailAddresses)
         {
             if (toMailAddresses == null || toMailAddresses.Count == 0)
                 throw new ArgumentNullException(nameof(toMailAddresses));
 
-            _toMailAddresses = toMailAddresses;
+            ToMailAddresses = toMailAddresses;
             return this;
         }
 
@@ -75,11 +76,11 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="ccMailAddresses">List of CC email addresses to receive the email.</param>
         /// <returns></returns>
-        public EmailMessage AddCcMailAddresses(List<MailAddress> ccMailAddresses)
+        public IEmailMessage AddCcMailAddresses(List<MailAddress> ccMailAddresses)
         {
             if (ccMailAddresses == null || ccMailAddresses.Count == 0)
                 throw new ArgumentNullException(nameof(ccMailAddresses));
-            _ccMailAddresses = ccMailAddresses;
+            CcMailAddresses = ccMailAddresses;
             return this;
         }
 
@@ -88,11 +89,11 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="bccMailAddresses">List of BCC email addresses to receive the email.</param>
         /// <returns></returns>
-        public EmailMessage AddBccMailAddresses(List<MailAddress> bccMailAddresses)
+        public IEmailMessage AddBccMailAddresses(List<MailAddress> bccMailAddresses)
         {
             if (bccMailAddresses == null || bccMailAddresses.Count == 0)
                 throw new ArgumentNullException(nameof(bccMailAddresses));
-            _bccMailAddresses = bccMailAddresses;
+            BccMailAddresses = bccMailAddresses;
             return this;
         }
 
@@ -101,38 +102,57 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="fromMailAddress">From email address for recepients to know where the email originated from.</param>
         /// <returns></returns>
-        public EmailMessage AddFromMailAddresses(MailAddress fromMailAddress)
+        public IEmailMessage AddFromMailAddresses(MailAddress fromMailAddress)
         {
             if (fromMailAddress == null || string.IsNullOrEmpty(fromMailAddress.Address))
                 throw new ArgumentNullException(nameof(fromMailAddress));
 
-            _fromMailAddress = fromMailAddress;
+            FromMailAddress = fromMailAddress;
             return this;
         }
-        
+
         /// <summary>
         /// Allows the adding of attachments on the email.
         /// </summary>
         /// <param name="attachments">File attachments to attach to the email message.</param>
         /// <returns></returns>
-        public EmailMessage WithAttachments(List<Attachment> attachments)
+        public IEmailMessage WithAttachments(List<Attachment> attachments)
         {
             if (attachments == null || attachments.Count == 0)
                 throw new ArgumentNullException(nameof(attachments));
-            _attachments = attachments;
+            Attachments = attachments;
             return this;
         }
 
-        public EmailMessage SetBodyIsHtmlFlag(bool emailBodyIsHtml = true)
+        public IEmailMessage SetBodyIsHtmlFlag(bool emailBodyIsHtml = true)
         {
-            _emailBodyIsHtml = emailBodyIsHtml;
+            EmailBodyIsHtml = emailBodyIsHtml;
             return this;
         }
 
-        internal EmailMessage SetBody(string emailBody)
+        internal IEmailMessage SetBody(string emailBody)
         {
-            _body = emailBody;
+            Body = emailBody;
             return this;
+        }
+
+        public MailMessage GetMessage()
+        {
+            var message = new MailMessage
+            {
+                Subject = Subject,
+                From = FromMailAddress
+            };
+
+            ToMailAddresses.ForEach(address => { message.To.Add(address); });
+            CcMailAddresses?.ForEach(address => { message.To.Add(address); });
+            BccMailAddresses?.ForEach(address => { message.To.Add(address); });
+            Attachments?.ForEach(attachment => { message.Attachments.Add(attachment); });
+            message.IsBodyHtml = EmailBodyIsHtml;
+            message.Priority = MailPriority.High;
+            message.Body = Body;
+
+            return message;
         }
     }
 }

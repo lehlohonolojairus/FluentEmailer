@@ -1,13 +1,16 @@
-﻿namespace FluentEmailer.LJShole
+﻿using System.Net;
+
+namespace FluentEmailer.LJShole
 {
-    public class MailCredentials
+    public class MailCredentials : IMailCredentials
     {
-       internal string _hostServer;
-       internal string _portNumber;
-       internal string _userName;
-       internal string _password;
-       internal bool _serverRequiresSsl;
-       internal Mailer _mailer;
+        internal string _hostServer;
+        internal string _portNumber;
+        internal string _userName;
+        internal string _password;
+        internal bool _serverRequiresSsl;
+        internal IMailer _mailer;
+        internal NetworkCredential _networkCredential;
 
         public MailCredentials(Mailer mailer)
         {
@@ -18,7 +21,7 @@
         /// </summary>
         /// <param name="hostServer"></param>
         /// <returns></returns>
-        public MailCredentials UsingHostServer(string hostServer)
+        public IMailCredentials UsingHostServer(string hostServer)
         {
             _hostServer = hostServer;
             return this;
@@ -28,7 +31,7 @@
         /// </summary>
         /// <param name="portNumber">The port number.</param>
         /// <returns></returns>
-        public MailCredentials OnPortNumber(string portNumber)
+        public IMailCredentials OnPortNumber(string portNumber)
         {
             _portNumber = portNumber;
             return this;
@@ -38,13 +41,13 @@
         /// </summary>
         /// <param name="userName">The email address as configured in the SMTP/IMAP server.</param>
         /// <returns></returns>
-        public MailCredentials WithUserName(string userName)
+        public IMailCredentials WithUserName(string userName)
         {
             _userName = userName;
             return this;
         }
 
-        public MailCredentials HostServerRequresSsl(bool serverRequiresSsl)
+        public IMailCredentials HostServerRequresSsl(bool serverRequiresSsl)
         {
             _serverRequiresSsl = serverRequiresSsl;
             return this;
@@ -54,10 +57,25 @@
         /// </summary>
         /// <param name="password">The password associated with the email address to use when sending emails.</param>
         /// <returns></returns>
-        public Mailer WithPassword(string password)
+        public IMailer WithPassword(string password)
         {
             _password = password;
+            _networkCredential = new NetworkCredential(_userName, _password);
+
+            (_mailer as Mailer).SetMailCredentials(this);
+            (_mailer as Mailer).SetNetworkCredential(_networkCredential);
+            
             return _mailer;
         }
+
+        public bool HostServerRequiresSsl { get { return _serverRequiresSsl; } }
+
+        public string PortNumber { get { return _portNumber; } }
+
+        public string HostServer { get { return _hostServer; } }
+
+        public string Password { get { return _password; } }
+
+        public string UserName { get { return _userName; } }
     }
 }

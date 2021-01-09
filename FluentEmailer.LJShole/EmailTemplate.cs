@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FluentEmailer.LJShole
 {
-    public class EmailTemplate
+    public class EmailTemplate : IEmailTemplate
     {
         public Mailer _mailer;
         public EmailMessage _emailMessage;
@@ -25,7 +25,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="templateLocation">Location of the template file to use as the body of the email. NB This does not support URI's.</param>
         /// <returns></returns>
-        public EmailTemplate UsingEmailTemplate(string templateLocation)
+        public IEmailTemplate UsingEmailTemplate(string templateLocation)
         {
             if (string.IsNullOrEmpty(templateLocation))
                 throw new ArgumentNullException(nameof(templateLocation));
@@ -39,7 +39,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="templateValues"></param>
         /// <returns></returns>
-        public EmailTemplate UsingTemplateDictionary(Dictionary<string, string> templateValues)
+        public IEmailTemplate UsingTemplateDictionary(Dictionary<string, string> templateValues)
         {
             if (templateValues == null || templateValues.Keys.Count == 0)
                 throw new InvalidOperationException("Template values are required.");
@@ -52,7 +52,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="emailBody"></param>
         /// <returns></returns>
-        public EmailMessage UsingString(string emailBody)
+        public IEmailMessage UsingString(string emailBody)
         {
             if (string.IsNullOrEmpty(emailBody))
                 throw new ArgumentNullException(nameof(emailBody));
@@ -67,7 +67,7 @@ namespace FluentEmailer.LJShole
         /// Replaces the placeholders in the template file with the dictionary specified in the 'UsingTemplateDictionary' method.
         /// </summary>
         /// <returns></returns>
-        public EmailMessage CompileTemplate()
+        public IEmailMessage CompileTemplate()
         {
             if (string.IsNullOrEmpty(_emailBody))
             {
