@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace FluentEmailer.LJShole
+namespace FluentEmailer.LJShole.Interfaces
 {
     public interface IMailer
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FluentEmailer.LJShole
+namespace FluentEmailer.LJShole.Interfaces
 {
     public interface IEmailTemplate
     {

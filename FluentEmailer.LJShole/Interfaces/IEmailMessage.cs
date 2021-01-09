@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Mail;
 
-namespace FluentEmailer.LJShole
+namespace FluentEmailer.LJShole.Interfaces
 {
     public interface IEmailMessage
     {

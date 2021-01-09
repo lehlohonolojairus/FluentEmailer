@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using FluentEmailer.LJShole.Interfaces;
+using System.Net;
 
 namespace FluentEmailer.LJShole
 {

@@ -11,10 +11,13 @@
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/lehlohonolojairus/FluentEmailer</RepositoryUrl>
     <PackageTags>.NET Core Email, Fluent API , Email</PackageTags>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

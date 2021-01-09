@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentEmailer.LJShole.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
