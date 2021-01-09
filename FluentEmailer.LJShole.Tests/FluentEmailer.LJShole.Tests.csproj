@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="SamplePDF.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestHtmlPage.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

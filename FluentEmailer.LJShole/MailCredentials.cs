@@ -2,12 +2,12 @@
 {
     public class MailCredentials
     {
-        public string _hostServer;
-        public string _portNumber;
-        public string _userName;
-        public string _password;
-        public bool _serverRequiresSsl;
-        public Mailer _mailer;
+       internal string _hostServer;
+       internal string _portNumber;
+       internal string _userName;
+       internal string _password;
+       internal bool _serverRequiresSsl;
+       internal Mailer _mailer;
 
         public MailCredentials(Mailer mailer)
         {
