@@ -8,13 +8,13 @@ namespace FluentEmailer.LJShole.Tests
 {
     public class MailerTests
     {
-        string hostName = string.Empty;
-        string portNumber = string.Empty;
-        string userName = string.Empty;
-        string password = string.Empty;
-        string toEmail = string.Empty;
-        string ccEmail = string.Empty;
-        string bccEmail = string.Empty;
+        readonly string hostName = string.Empty;
+        readonly string portNumber = string.Empty;
+        readonly string userName = string.Empty;
+        readonly string password = string.Empty;
+        readonly string toEmail = string.Empty;
+        readonly string ccEmail = string.Empty;
+        readonly string bccEmail = string.Empty;
 
         [Fact]
         public void Can_Send_Mail_With_String_Body()
@@ -26,6 +26,7 @@ namespace FluentEmailer.LJShole.Tests
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
                         .AddCcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
                         .AddBccMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
+                        .WithAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"SamplePDF.pdf")}") })
                         .WithBody()
                             .UsingString("Email body as string")
                             .BuildMessageBody()

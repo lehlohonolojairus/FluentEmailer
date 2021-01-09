@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 
@@ -6,7 +7,7 @@ namespace FluentEmailer.LJShole
 {
     public class Mailer
     {
-        public EmailMessage _mailMessage;
+        internal EmailMessage _mailMessage;
 
         public EmailMessage Message()
         {
@@ -24,29 +25,33 @@ namespace FluentEmailer.LJShole
                 System.Net.NetworkCredential credentials =
                    new System.Net.NetworkCredential(_mailMessage._mailCredentials._userName, _mailMessage._mailCredentials._password);
                 smtpClient.Credentials = credentials;
+                smtpClient.EnableSsl = _mailMessage._mailCredentials._serverRequiresSsl;
                 smtpClient.Send(mailMsg);
                 return true;
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
                 // message is null
+                throw;
             }
-            catch (ObjectDisposedException ex)
+            catch (ObjectDisposedException)
             {
                 //     This object has been disposed.
+                throw;
             }
-            catch (SmtpFailedRecipientsException ex)
+            catch (SmtpFailedRecipientsException)
             {
                 //     The message could not be delivered to two or more of the recipients in System.Net.Mail.MailMessage.To,
                 //     System.Net.Mail.MailMessage.CC, or System.Net.Mail.MailMessage.Bcc.
+                throw;
             }
-            catch (SmtpFailedRecipientException ex)
+            catch (SmtpFailedRecipientException)
             {
                 //     The message could not be delivered to one of the recipients in System.Net.Mail.MailMessage.To,
                 //     System.Net.Mail.MailMessage.CC, or System.Net.Mail.MailMessage.Bcc.
-                //
+                throw;
             }
-            catch (SmtpException ex)
+            catch (SmtpException)
             {
                 //     The connection to the SMTP server failed. - or - Authentication failed. - or - The
                 //     operation timed out. -or- System.Net.Mail.SmtpClient.EnableSsl is set to true
@@ -54,8 +59,9 @@ namespace FluentEmailer.LJShole
                 //     or System.Net.Mail.SmtpDeliveryMethod.PickupDirectoryFromIis. -or- System.Net.Mail.SmtpClient.EnableSsl
                 //     is set to true, but the SMTP mail server did not advertise STARTTLS in the response
                 //     to the EHLO command.
+                throw;
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 //     This System.Net.Mail.SmtpClient has a Overload:System.Net.Mail.SmtpClient.SendAsync
                 //     call in progress. -or- System.Net.Mail.MailMessage.From is null. -or- There are
@@ -66,19 +72,27 @@ namespace FluentEmailer.LJShole
                 //     and System.Net.Mail.SmtpClient.Host is equal to the empty string (""). -or- System.Net.Mail.SmtpClient.DeliveryMethod
                 //     property is set to System.Net.Mail.SmtpDeliveryMethod.Network and System.Net.Mail.SmtpClient.Port
                 //     is zero, a negative number, or greater than 65,535.
+                throw;
             }
-            catch (Exception ex)
+            catch (FileNotFoundException)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
-            return false;
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private MailMessage CreateMessageMailMessage()
         {
-            var mailMsg = new MailMessage();
+            if (_mailMessage == null)
+                throw new InvalidOperationException("Mail Message has not be initialized.");
 
-            mailMsg.From = _mailMessage._fromMailAddress;
+            var mailMsg = new MailMessage
+            {
+                From = _mailMessage._fromMailAddress
+            };
 
             _mailMessage._toMailAddresses.ToList().ForEach(mailAddress =>
             {
@@ -97,7 +111,13 @@ namespace FluentEmailer.LJShole
             mailMsg.Priority = MailPriority.High;
             mailMsg.IsBodyHtml = _mailMessage._emailBodyIsHtml;
             mailMsg.Body = _mailMessage._body;
-
+            if (_mailMessage._attachments != null && _mailMessage._attachments.Count > 0)
+            {
+                _mailMessage._attachments.ForEach(attachment =>
+                {
+                    mailMsg.Attachments.Add(attachment);
+                });
+            }
             return mailMsg;
         }
     }
