@@ -8,13 +8,13 @@ namespace FluentEmailer.LJShole.Tests
 {
     public class MailerTests
     {
-        readonly string hostName = "mail.addictedmobile.com";
-        readonly string portNumber = "25";
-        readonly string userName = "admin@addictedmobile.com";
-        readonly string password = "k0mF7l0!";
-        readonly string toEmail = "ljshole@gmail.com";
-        readonly string ccEmail = "ljshole@yahoo.com";
-        readonly string bccEmail = "hloni@creativemode.co.za";
+        readonly string hostName = string.Empty;
+        readonly string portNumber = string.Empty;
+        readonly string userName = string.Empty;
+        readonly string password = string.Empty;
+        readonly string toEmail = string.Empty;
+        readonly string ccEmail = string.Empty;
+        readonly string bccEmail = string.Empty;
 
         [Fact]
         public void Can_Send_Mail_With_String_Body_With_No_Attachment()
