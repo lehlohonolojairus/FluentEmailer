@@ -22,16 +22,31 @@ namespace FluentEmailer.LJShole
         {
             _mailer = mailer;
         }
+        /// <summary>
+        /// Bootstrapper for setting up the email to send.
+        /// </summary>
+        /// <returns></returns>
         public EmailTemplate WithBody()
         {
             _template = _template ?? new EmailTemplate(this, _mailer);
             return _template;
         }
+
+        /// <summary>
+        /// Set up SMTP /IMAP server credentials.
+        /// </summary>
+        /// <returns></returns>
         public MailCredentials WithCredentials()
         {
             _mailCredentials = _mailCredentials ?? new MailCredentials(_mailer);
             return _mailCredentials;
         }
+
+        /// <summary>
+        /// Sets the subject of the email.
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <returns></returns>
         public EmailMessage WithSubject(string subject)
         {
             if (string.IsNullOrEmpty(subject))
@@ -40,33 +55,66 @@ namespace FluentEmailer.LJShole
             _subject = subject;
             return this;
         }
-        public EmailMessage AddToMailAddresses(List<MailAddress> mailAddresses)
-        {
-            if (mailAddresses == null || mailAddresses.Count == 0)
-                throw new ArgumentNullException(nameof(mailAddresses));
 
-            _toMailAddresses = mailAddresses;
-            return this;
-        }
-        public EmailMessage AddCcMailAddresses(List<MailAddress> mailAddresses)
+        /// <summary>
+        /// Add a list of email addresses the email to be sent to.
+        /// </summary>
+        /// <param name="toMailAddresses">List of email addresses to receive the email.</param>
+        /// <returns></returns>
+        public EmailMessage AddToMailAddresses(List<MailAddress> toMailAddresses)
         {
-            if (mailAddresses == null || mailAddresses.Count == 0)
-                throw new ArgumentNullException(nameof(mailAddresses));
-            _ccMailAddresses = mailAddresses;
+            if (toMailAddresses == null || toMailAddresses.Count == 0)
+                throw new ArgumentNullException(nameof(toMailAddresses));
+
+            _toMailAddresses = toMailAddresses;
             return this;
         }
-        public EmailMessage AddBccMailAddresses(List<MailAddress> mailAddresses)
+
+        /// <summary>
+        /// Add a list of CC email addresses the email to be sent to.
+        /// </summary>
+        /// <param name="ccMailAddresses">List of CC email addresses to receive the email.</param>
+        /// <returns></returns>
+        public EmailMessage AddCcMailAddresses(List<MailAddress> ccMailAddresses)
         {
-            if (mailAddresses == null || mailAddresses.Count == 0)
-                throw new ArgumentNullException(nameof(mailAddresses));
-            _bccMailAddresses = mailAddresses;
+            if (ccMailAddresses == null || ccMailAddresses.Count == 0)
+                throw new ArgumentNullException(nameof(ccMailAddresses));
+            _ccMailAddresses = ccMailAddresses;
             return this;
         }
-        public EmailMessage AddFromMailAddresses(MailAddress mailAddress)
+
+        /// <summary>
+        /// Add a list of BCC email addresses the email to be sent to.
+        /// </summary>
+        /// <param name="bccMailAddresses">List of BCC email addresses to receive the email.</param>
+        /// <returns></returns>
+        public EmailMessage AddBccMailAddresses(List<MailAddress> bccMailAddresses)
         {
-            _fromMailAddress = mailAddress;
+            if (bccMailAddresses == null || bccMailAddresses.Count == 0)
+                throw new ArgumentNullException(nameof(bccMailAddresses));
+            _bccMailAddresses = bccMailAddresses;
             return this;
         }
+
+        /// <summary>
+        /// Add a from email address.
+        /// </summary>
+        /// <param name="fromMailAddress">From email address for recepients to know where the email originated from.</param>
+        /// <returns></returns>
+        public EmailMessage AddFromMailAddresses(MailAddress fromMailAddress)
+        {
+            if (fromMailAddress == null || string.IsNullOrEmpty(fromMailAddress.Address))
+                throw new ArgumentNullException(nameof(fromMailAddress));
+
+            _fromMailAddress = fromMailAddress;
+            return this;
+        }
+        
+        /// <summary>
+        /// Allows the adding of attachments on the email.
+        /// </summary>
+        /// <param name="attachments">File attachments to attach to the email message.</param>
+        /// <returns></returns>
         public EmailMessage WithAttachments(List<Attachment> attachments)
         {
             if (attachments == null || attachments.Count == 0)
