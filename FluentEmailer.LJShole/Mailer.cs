@@ -1,31 +1,44 @@
-﻿using System;
+﻿using FluentEmailer.LJShole.Interfaces;
+using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 
 namespace FluentEmailer.LJShole
 {
-    public class Mailer
+    /// <summary>
+    /// Class to use for sending emails.
+    /// </summary>
+    public class Mailer : IMailer
     {
-        internal EmailMessage _mailMessage;
+        private IEmailMessage _mailMessage;
+        private IMailCredentials _mailCredentials;
+        private NetworkCredential _networkCredential;
 
-        public EmailMessage Message()
+        /// <summary>
+        /// Bootstrap the email creation process.
+        /// </summary>
+        /// <returns></returns>
+        public IEmailMessage SetUpMessage()
         {
             _mailMessage = _mailMessage ?? new EmailMessage(this);
 
             return _mailMessage;
         }
 
+        /// <summary>
+        /// Sends out the email.
+        /// </summary>
+        /// <returns></returns>
         public bool Send()
         {
             try
             {
-                MailMessage mailMsg = CreateMessageMailMessage();
-                SmtpClient smtpClient = new SmtpClient(_mailMessage._mailCredentials._hostServer, int.Parse(_mailMessage._mailCredentials._portNumber));
-                System.Net.NetworkCredential credentials =
-                   new System.Net.NetworkCredential(_mailMessage._mailCredentials._userName, _mailMessage._mailCredentials._password);
-                smtpClient.Credentials = credentials;
-                smtpClient.EnableSsl = _mailMessage._mailCredentials._serverRequiresSsl;
+                var mailMsg = _mailMessage.GetMessage();
+                SmtpClient smtpClient = new SmtpClient(_mailCredentials.HostServer, int.Parse(_mailCredentials.PortNumber));
+                smtpClient.Credentials = _networkCredential;
+                smtpClient.EnableSsl = _mailCredentials.HostServerRequiresSsl;
                 smtpClient.Send(mailMsg);
                 return true;
             }
@@ -83,42 +96,23 @@ namespace FluentEmailer.LJShole
                 throw;
             }
         }
-
-        private MailMessage CreateMessageMailMessage()
+        /// <summary>
+        /// Returns the message instance.
+        /// </summary>
+        public IEmailMessage Message { get { return _mailMessage; } }
+        /// <summary>
+        /// Returns the specified login mail credentials as configured on the SMTP / IMAP server.
+        /// </summary>
+        public IMailCredentials MailCredentials { get { return _mailCredentials; } }
+        
+        internal void SetMailCredentials(IMailCredentials mailCredentials)
         {
-            if (_mailMessage == null)
-                throw new InvalidOperationException("Mail Message has not be initialized.");
-
-            var mailMsg = new MailMessage
-            {
-                From = _mailMessage._fromMailAddress
-            };
-
-            _mailMessage._toMailAddresses.ToList().ForEach(mailAddress =>
-            {
-                mailMsg.To.Add(mailAddress);
-            });
-            _mailMessage._ccMailAddresses.ToList().ForEach(mailAddress =>
-            {
-                mailMsg.CC.Add(mailAddress);
-            });
-            _mailMessage._bccMailAddresses.ToList().ForEach(mailAddress =>
-            {
-                mailMsg.Bcc.Add(mailAddress);
-            });
-
-            mailMsg.Subject = _mailMessage._subject;
-            mailMsg.Priority = MailPriority.High;
-            mailMsg.IsBodyHtml = _mailMessage._emailBodyIsHtml;
-            mailMsg.Body = _mailMessage._body;
-            if (_mailMessage._attachments != null && _mailMessage._attachments.Count > 0)
-            {
-                _mailMessage._attachments.ForEach(attachment =>
-                {
-                    mailMsg.Attachments.Add(attachment);
-                });
-            }
-            return mailMsg;
+            _mailCredentials = mailCredentials;
         }
+        internal void SetNetworkCredential(NetworkCredential networkCredential)
+        {
+            _networkCredential = networkCredential;
+        }
+
     }
 }

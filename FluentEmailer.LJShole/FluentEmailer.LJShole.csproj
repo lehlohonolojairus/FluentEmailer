@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>FluentEmailer.LJShole</AssemblyName>
     <Authors>Lehlohonolo Jairus Shole</Authors>
     <Description>Fluent API to send emails in a .NET Core application using your own SMTP settings</Description>
@@ -10,10 +11,13 @@
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/lehlohonolojairus/FluentEmailer</RepositoryUrl>
     <PackageTags>.NET Core Email, Fluent API , Email</PackageTags>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

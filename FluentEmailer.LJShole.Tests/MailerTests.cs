@@ -20,7 +20,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Can_Send_Mail_With_String_Body_With_No_Attachment()
         {
             var emailIsSent = new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Mail Subject")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
@@ -40,7 +40,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Can_Send_Mail_With_String_Body_With_Attachment()
         {
             var emailIsSent = new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Mail Subject")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
@@ -61,7 +61,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Can_Send_Mail_With_String_Body_Add_BccAndCcEmails()
         {
             var emailIsSent = new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Mail Subject")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - Bcc and CC Emails"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
@@ -84,7 +84,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Can_Send_Mail_Using_Email_Template_With_No_Attachments()
         {
             var emailIsSent = new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Mail Subject Template")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - Template - No Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
@@ -106,7 +106,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Can_Send_Mail_Using_Email_Template_With_Attachments()
         {
             var emailIsSent = new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Mail Subject Template")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - Template - With Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
@@ -130,7 +130,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Throws_ArgumentNullException_When_Email_Subject_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject(string.Empty)
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
@@ -150,7 +150,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Throws_ArgumentNullException_When_To_Email_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Test Subject")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(null)
@@ -170,7 +170,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Throws_ArgumentNullException_When_Cc_Email_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Test Subject")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
@@ -191,7 +191,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Throws_ArgumentNullException_When_Bcc_Email_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Test Subject")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
@@ -212,7 +212,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Throws_ArgumentNullException_When_From_Email_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
-                    .Message()
+                    .SetUpMessage()
                         .WithSubject("Test Subject")
                         .AddFromMailAddresses(null)
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
