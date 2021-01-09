@@ -20,6 +20,11 @@ namespace FluentEmailer.LJShole
             _mailer = mailer;
         }
 
+        /// <summary>
+        /// The body of the email will use this template file. 
+        /// </summary>
+        /// <param name="templateLocation">Location of the template file to use as the body of the email. NB This does not support URI's.</param>
+        /// <returns></returns>
         public EmailTemplate UsingEmailTemplate(string templateLocation)
         {
             if (string.IsNullOrEmpty(templateLocation))
@@ -29,6 +34,11 @@ namespace FluentEmailer.LJShole
             return this;
         }
 
+        /// <summary>
+        /// Dictionary containing key/value pairs. Keys in this dictionary represent placeholders found on the template file specified / to be specified.
+        /// </summary>
+        /// <param name="templateValues"></param>
+        /// <returns></returns>
         public EmailTemplate UsingTemplateDictionary(Dictionary<string, string> templateValues)
         {
             if (templateValues == null || templateValues.Keys.Count == 0)
@@ -37,15 +47,27 @@ namespace FluentEmailer.LJShole
             _templateValues = templateValues;
             return this;
         }
-        public EmailTemplate UsingString(string emailBody)
+        /// <summary>
+        /// Sets the body of the email to a this string.
+        /// </summary>
+        /// <param name="emailBody"></param>
+        /// <returns></returns>
+        public EmailMessage UsingString(string emailBody)
         {
             if (string.IsNullOrEmpty(emailBody))
                 throw new ArgumentNullException(nameof(emailBody));
 
             _emailBody = emailBody;
-            return this;
+
+            _emailMessage.SetBody(_emailBody);
+
+            return _emailMessage;
         }
-        public EmailMessage BuildMessageBody()
+        /// <summary>
+        /// Replaces the placeholders in the template file with the dictionary specified in the 'UsingTemplateDictionary' method.
+        /// </summary>
+        /// <returns></returns>
+        public EmailMessage CompileTemplate()
         {
             if (string.IsNullOrEmpty(_emailBody))
             {
