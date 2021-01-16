@@ -42,7 +42,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(emailIsSent);
         }
-
+        
         [Fact]
         public void Can_Send_Mail_With_String_Body_With_Attachment()
         {
@@ -68,7 +68,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(emailIsSent);
         }
-
+       
         [Fact]
         public void Can_Send_Mail_With_String_Body_Add_BccAndCcEmails()
         {
@@ -120,9 +120,9 @@ namespace FluentEmailer.LJShole.Tests
                                 .WithPassword(password)
                             .Send();
 
-            Assert.True(emailIsSent);
+            Assert.True(emailIsSent);    
         }
-
+        
         [Fact]
         public void Can_Send_Mail_Using_Email_Template_With_Attachments()
         {
@@ -172,7 +172,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'subject')"));
         }
-
+        
         [Fact]
         public void Throws_ArgumentNullException_When_To_Email_Is_Not_Provided()
         {
@@ -194,7 +194,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'toMailAddresses')"));
         }
-
+        
         [Fact]
         public void Throws_ArgumentNullException_When_Cc_Email_Is_Not_Provided()
         {
@@ -217,7 +217,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'ccMailAddresses')"));
         }
-
+        
         [Fact]
         public void Throws_ArgumentNullException_When_Bcc_Email_Is_Not_Provided()
         {
@@ -240,7 +240,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'bccMailAddresses')"));
         }
-
+       
         [Fact]
         public void Throws_ArgumentNullException_When_From_Email_Is_Not_Provided()
         {
@@ -261,6 +261,33 @@ namespace FluentEmailer.LJShole.Tests
                     .Send());
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'fromMailAddress')"));
+        }
+
+        [Fact]
+        public void Can_Send_Mail_With_ReplyTo_SubjectEncoding_BodyEncoding_BodyTranser_Set()
+        {
+            var emailIsSent = new Mailer()
+                    .SetUpMessage()
+                        .WithSubject("Mail Subject")
+                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - With ReplyTo"))
+                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .SetSubjectEncoding(Encoding.UTF8)
+                        .WithReplyTo(new MailAddress("info@creativemode.co.za"))
+                        .SetUpBody()
+                            .SetBodyEncoding(Encoding.UTF8)
+                            .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                            .Body()
+                                .UsingString("This is me Testing")
+                                .SetBodyIsHtmlFlag()
+                   .SetPriority(MailPriority.Normal)
+                   .WithCredentials()
+                        .UsingHostServer(hostName)
+                        .OnPortNumber(portNumber)
+                        .WithUserName(userName)
+                        .WithPassword(password)
+                    .Send();
+
+            Assert.True(emailIsSent);
         }
     }
 }
