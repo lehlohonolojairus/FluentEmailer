@@ -63,3 +63,28 @@ Fluent API to send emails in a .NET Core application using your own SMTP setting
                         .WithUserName(userName)
                         .WithPassword(password)
                 .Send();
+                
+                
+# V 1.0.3 Changes
+
+        new Mailer()
+            .SetUpMessage()
+                .WithSubject("Mail Subject")
+                .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - With ReplyTo"))
+                .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                .SetSubjectEncoding(Encoding.UTF8)
+                .WithReplyTo(new MailAddress("info@creativemode.co.za"))
+                .SetUpBody()
+                    .SetBodyEncoding(Encoding.UTF8)
+                    .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                    .Body()
+                        .UsingString("This is me Testing")
+                        .SetBodyIsHtmlFlag()
+                        .SetPriority(MailPriority.Normal)
+            .WithCredentials()
+                .UsingHostServer(hostName)
+                .OnPortNumber(portNumber)
+                .WithUserName(userName)
+                .WithPassword(password)
+            .Send();
+
