@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 
 namespace FluentEmailer.LJShole.Interfaces
 {
@@ -8,5 +9,6 @@ namespace FluentEmailer.LJShole.Interfaces
         IEmailMessage Message { get; }
         IMailCredentials MailCredentials { get; }
         bool Send();
+        Task<bool> SendAsync();
     }
 }

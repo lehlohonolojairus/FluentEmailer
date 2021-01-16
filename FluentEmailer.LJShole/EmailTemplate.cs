@@ -6,19 +6,23 @@ using System.Linq;
 
 namespace FluentEmailer.LJShole
 {
+    /// <summary>
+    /// Class definition for using a template file. This class should not be used directly.
+    /// </summary>
     public class EmailTemplate : IEmailTemplate
     {
-        public Mailer _mailer;
-        public EmailMessage _emailMessage;
-        public MailCredentials _mailCredentials;
-        public string _emailBody;
-        public string _templateLocation;
-        public Dictionary<string, string> _templateValues;
+        private readonly IMailer _mailer;
+        private readonly IEmailMessage _emailMessage;
+        private string _emailBody;
+        private IEmailBody _emailBodyInstance;
+        private string _templateLocation;
+        private Dictionary<string, string> _templateValues;
 
-        public EmailTemplate(EmailMessage emailMessage, Mailer mailer)
+        public EmailTemplate(IEmailMessage emailMessage, IMailer mailer, IEmailBody emailBody)
         {
             _emailMessage = emailMessage;
             _mailer = mailer;
+            _emailBodyInstance = emailBody;
         }
 
         /// <summary>
@@ -53,22 +57,22 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="emailBody"></param>
         /// <returns></returns>
-        public IEmailMessage UsingString(string emailBody)
+        public IEmailBody UsingString(string emailBody)
         {
             if (string.IsNullOrEmpty(emailBody))
                 throw new ArgumentNullException(nameof(emailBody));
 
             _emailBody = emailBody;
 
-            _emailMessage.SetBody(_emailBody);
-
-            return _emailMessage;
+           ( _emailMessage as EmailMessage).SetBody(_emailBody);
+            _emailBodyInstance = _emailBodyInstance ?? new EmailBody(_emailMessage, _mailer);
+            return _emailBodyInstance;
         }
         /// <summary>
         /// Replaces the placeholders in the template file with the dictionary specified in the 'UsingTemplateDictionary' method.
         /// </summary>
         /// <returns></returns>
-        public IEmailMessage CompileTemplate()
+        public IEmailBody CompileTemplate()
         {
             if (string.IsNullOrEmpty(_emailBody))
             {
@@ -82,9 +86,11 @@ namespace FluentEmailer.LJShole
                 }
             }
 
-            _emailMessage.SetBody(_emailBody);
+           ( _emailMessage as EmailMessage).SetBody(_emailBody);
+            
+            _emailBodyInstance = _emailBodyInstance ?? new EmailBody(_emailMessage, _mailer);
 
-            return _emailMessage;
+            return _emailBodyInstance;
         }
 
     }

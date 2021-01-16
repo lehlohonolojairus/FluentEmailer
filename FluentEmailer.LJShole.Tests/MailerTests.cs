@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Mail;
+using System.Net.Mime;
+using System.Text;
 using Xunit;
 
 namespace FluentEmailer.LJShole.Tests
@@ -24,9 +26,13 @@ namespace FluentEmailer.LJShole.Tests
                         .WithSubject("Mail Subject")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .WithBody()
-                            .UsingString("Email body as string")
-                        .SetBodyIsHtmlFlag()
+                        .SetUpBody()
+                            .SetBodyEncoding(Encoding.UTF8)
+                            .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                            .Body()
+                                .UsingString("This is me Testing")
+                                .SetBodyIsHtmlFlag()
+                   .SetPriority(MailPriority.Normal)
                    .WithCredentials()
                         .UsingHostServer(hostName)
                         .OnPortNumber(portNumber)
@@ -36,46 +42,56 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(emailIsSent);
         }
+        
         [Fact]
         public void Can_Send_Mail_With_String_Body_With_Attachment()
         {
             var emailIsSent = new Mailer()
-                    .SetUpMessage()
-                        .WithSubject("Mail Subject")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .WithAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
-                        .WithBody()
-                            .UsingString("Email body as string")
-                        .SetBodyIsHtmlFlag()
-                   .WithCredentials()
-                        .UsingHostServer(hostName)
-                        .OnPortNumber(portNumber)
-                        .WithUserName(userName)
-                        .WithPassword(password)
-                    .Send();
+                               .SetUpMessage()
+                                    .WithSubject("Mail Subject")
+                                    .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
+                                    .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                                    .WithAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
+                                   .SetUpBody()
+                                       .SetBodyEncoding(Encoding.UTF8)
+                                       .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                                       .Body()
+                                           .UsingString("This is me Testing")
+                                           .SetBodyIsHtmlFlag()
+                              .SetPriority(MailPriority.Normal)
+                              .WithCredentials()
+                                   .UsingHostServer(hostName)
+                                   .OnPortNumber(portNumber)
+                                   .WithUserName(userName)
+                                   .WithPassword(password)
+                               .Send();
 
             Assert.True(emailIsSent);
         }
+       
         [Fact]
         public void Can_Send_Mail_With_String_Body_Add_BccAndCcEmails()
         {
             var emailIsSent = new Mailer()
-                    .SetUpMessage()
-                        .WithSubject("Mail Subject")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - Bcc and CC Emails"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .AddCcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
-                        .AddBccMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
-                        .WithBody()
-                            .UsingString("Email body as string")
-                        .SetBodyIsHtmlFlag()
-                   .WithCredentials()
-                        .UsingHostServer(hostName)
-                        .OnPortNumber(portNumber)
-                        .WithUserName(userName)
-                        .WithPassword(password)
-                    .Send();
+                              .SetUpMessage()
+                                   .WithSubject("Mail Subject")
+                                   .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - Bcc and CC Emails"))
+                                   .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                                   .AddCcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
+                                   .AddBccMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
+                                   .SetUpBody()
+                                      .SetBodyEncoding(Encoding.UTF8)
+                                      .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                                      .Body()
+                                          .UsingString("Email body as string")
+                                          .SetBodyIsHtmlFlag()
+                             .SetPriority(MailPriority.Normal)
+                             .WithCredentials()
+                                  .UsingHostServer(hostName)
+                                  .OnPortNumber(portNumber)
+                                  .WithUserName(userName)
+                                  .WithPassword(password)
+                              .Send();
 
             Assert.True(emailIsSent);
         }
@@ -84,44 +100,53 @@ namespace FluentEmailer.LJShole.Tests
         public void Can_Send_Mail_Using_Email_Template_With_No_Attachments()
         {
             var emailIsSent = new Mailer()
-                    .SetUpMessage()
-                        .WithSubject("Mail Subject Template")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - Template - No Attachments"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .WithBody()
-                            .UsingEmailTemplate($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestHtmlPage.html")}")
-                            .UsingTemplateDictionary(new Dictionary<string, string> { { "{{subject}}", "Testing Message" }, { "{{body}}", "<section><h2>This is</h2><p>Welcome to our world</p></section>" } })
-                            .CompileTemplate()
-                        .SetBodyIsHtmlFlag()
-                   .WithCredentials()
-                        .UsingHostServer(hostName)
-                        .OnPortNumber(portNumber)
-                        .WithUserName(userName)
-                        .WithPassword(password)
-                    .Send();
+                            .SetUpMessage()
+                                 .WithSubject("Mail Subject Template")
+                                 .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - Template - No Attachments"))
+                                 .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                                 .SetUpBody()
+                                    .SetBodyEncoding(Encoding.UTF8)
+                                    .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                                    .Body()
+                                         .UsingEmailTemplate($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestHtmlPage.html")}")
+                                         .UsingTemplateDictionary(new Dictionary<string, string> { { "{{subject}}", "Testing Message" }, { "{{body}}", "<section><h2>This is</h2><p>Welcome to our world</p></section>" } })
+                                         .CompileTemplate()
+                                         .SetBodyIsHtmlFlag()
+                           .SetPriority(MailPriority.Normal)
+                           .WithCredentials()
+                                .UsingHostServer(hostName)
+                                .OnPortNumber(portNumber)
+                                .WithUserName(userName)
+                                .WithPassword(password)
+                            .Send();
 
-            Assert.True(emailIsSent);
+            Assert.True(emailIsSent);    
         }
+        
         [Fact]
         public void Can_Send_Mail_Using_Email_Template_With_Attachments()
         {
             var emailIsSent = new Mailer()
-                    .SetUpMessage()
-                        .WithSubject("Mail Subject Template")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - Template - With Attachments"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .WithAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
-                        .WithBody()
-                            .UsingEmailTemplate($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestHtmlPage.html")}")
-                            .UsingTemplateDictionary(new Dictionary<string, string> { { "{{subject}}", "Testing Message" }, { "{{body}}", "<section><h2>This is</h2><p>Welcome to our world</p></section>" } })
-                            .CompileTemplate()
-                        .SetBodyIsHtmlFlag()
-                   .WithCredentials()
-                        .UsingHostServer(hostName)
-                        .OnPortNumber(portNumber)
-                        .WithUserName(userName)
-                        .WithPassword(password)
-                    .Send();
+                            .SetUpMessage()
+                                 .WithSubject("Mail Subject Template")
+                                 .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - Template - With Attachments"))
+                                 .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                                 .WithAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
+                                 .SetUpBody()
+                                    .SetBodyEncoding(Encoding.UTF8)
+                                    .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                                    .Body()
+                                         .UsingEmailTemplate($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestHtmlPage.html")}")
+                                         .UsingTemplateDictionary(new Dictionary<string, string> { { "{{subject}}", "Testing Message" }, { "{{body}}", "<section><h2>This is</h2><p>Welcome to our world</p></section>" } })
+                                         .CompileTemplate()
+                                         .SetBodyIsHtmlFlag()
+                           .SetPriority(MailPriority.Normal)
+                           .WithCredentials()
+                                .UsingHostServer(hostName)
+                                .OnPortNumber(portNumber)
+                                .WithUserName(userName)
+                                .WithPassword(password)
+                            .Send();
 
             Assert.True(emailIsSent);
         }
@@ -134,9 +159,10 @@ namespace FluentEmailer.LJShole.Tests
                         .WithSubject(string.Empty)
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .WithBody()
-                            .UsingString("Test Body")
-                        .SetBodyIsHtmlFlag()
+                        .SetUpBody()
+                            .Body()
+                                .UsingString("Test Body")
+                                .SetBodyIsHtmlFlag()
                    .WithCredentials()
                         .UsingHostServer(hostName)
                         .OnPortNumber(portNumber)
@@ -146,6 +172,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'subject')"));
         }
+        
         [Fact]
         public void Throws_ArgumentNullException_When_To_Email_Is_Not_Provided()
         {
@@ -154,9 +181,10 @@ namespace FluentEmailer.LJShole.Tests
                         .WithSubject("Test Subject")
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(null)
-                        .WithBody()
-                            .UsingString("Test Body")
-                        .SetBodyIsHtmlFlag()
+                        .SetUpBody()
+                            .Body()
+                                .UsingString("Test Body")
+                                .SetBodyIsHtmlFlag()
                    .WithCredentials()
                         .UsingHostServer(hostName)
                         .OnPortNumber(portNumber)
@@ -166,6 +194,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'toMailAddresses')"));
         }
+        
         [Fact]
         public void Throws_ArgumentNullException_When_Cc_Email_Is_Not_Provided()
         {
@@ -175,9 +204,10 @@ namespace FluentEmailer.LJShole.Tests
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
                         .AddCcMailAddresses(null)
-                        .WithBody()
-                            .UsingString("Test Body")
-                        .SetBodyIsHtmlFlag()
+                        .SetUpBody()
+                            .Body()
+                                .UsingString("Test Body")
+                                .SetBodyIsHtmlFlag()
                    .WithCredentials()
                         .UsingHostServer(hostName)
                         .OnPortNumber(portNumber)
@@ -187,6 +217,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'ccMailAddresses')"));
         }
+        
         [Fact]
         public void Throws_ArgumentNullException_When_Bcc_Email_Is_Not_Provided()
         {
@@ -196,9 +227,10 @@ namespace FluentEmailer.LJShole.Tests
                         .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
                         .AddBccMailAddresses(null)
-                        .WithBody()
-                            .UsingString("Test Body")
-                        .SetBodyIsHtmlFlag()
+                        .SetUpBody()
+                            .Body()
+                                .UsingString("Test Body")
+                                .SetBodyIsHtmlFlag()
                    .WithCredentials()
                         .UsingHostServer(hostName)
                         .OnPortNumber(portNumber)
@@ -208,6 +240,7 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'bccMailAddresses')"));
         }
+       
         [Fact]
         public void Throws_ArgumentNullException_When_From_Email_Is_Not_Provided()
         {
@@ -216,9 +249,10 @@ namespace FluentEmailer.LJShole.Tests
                         .WithSubject("Test Subject")
                         .AddFromMailAddresses(null)
                         .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .WithBody()
-                            .UsingString("Test Body")
-                        .SetBodyIsHtmlFlag()
+                        .SetUpBody()
+                           .Body()
+                             .UsingString("Test Body")
+                             .SetBodyIsHtmlFlag()
                    .WithCredentials()
                         .UsingHostServer(hostName)
                         .OnPortNumber(portNumber)
@@ -227,6 +261,33 @@ namespace FluentEmailer.LJShole.Tests
                     .Send());
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'fromMailAddress')"));
+        }
+
+        [Fact]
+        public void Can_Send_Mail_With_ReplyTo_SubjectEncoding_BodyEncoding_BodyTranser_Set()
+        {
+            var emailIsSent = new Mailer()
+                    .SetUpMessage()
+                        .WithSubject("Mail Subject")
+                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - With ReplyTo"))
+                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .SetSubjectEncoding(Encoding.UTF8)
+                        .WithReplyTo(new MailAddress("info@creativemode.co.za"))
+                        .SetUpBody()
+                            .SetBodyEncoding(Encoding.UTF8)
+                            .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                            .Body()
+                                .UsingString("This is me Testing")
+                                .SetBodyIsHtmlFlag()
+                   .SetPriority(MailPriority.Normal)
+                   .WithCredentials()
+                        .UsingHostServer(hostName)
+                        .OnPortNumber(portNumber)
+                        .WithUserName(userName)
+                        .WithPassword(password)
+                    .Send();
+
+            Assert.True(emailIsSent);
         }
     }
 }
