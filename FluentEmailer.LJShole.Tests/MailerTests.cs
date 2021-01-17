@@ -10,22 +10,22 @@ namespace FluentEmailer.LJShole.Tests
 {
     public class MailerTests
     {
-        readonly string hostName = string.Empty;
-        readonly string portNumber = string.Empty;
-        readonly string userName = string.Empty;
-        readonly string password = string.Empty;
-        readonly string toEmail = string.Empty;
-        readonly string ccEmail = string.Empty;
-        readonly string bccEmail = string.Empty;
+        readonly string hostName = "mail.creativemode.co.za";
+        readonly string portNumber = "25";
+        readonly string userName = "admin@creativemode.co.za";
+        readonly string password = "jhja%&j2*&jdjaHGAmxh";
+        readonly string toEmail = "ljshole@gmail.com";
+        readonly string ccEmail = "ljshole@yahoo.com";
+        readonly string bccEmail = "hloni@creativemode.co.za";
 
         [Fact]
         public void Can_Send_Mail_With_String_Body_With_No_Attachment()
         {
             var emailIsSent = new Mailer()
                     .SetUpMessage()
-                        .WithSubject("Mail Subject")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .Subject("Mail Subject")
+                        .FromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments"))
+                        .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
                         .SetUpBody()
                             .SetBodyEncoding(Encoding.UTF8)
                             .SetBodyTransferEncoding(TransferEncoding.Unknown)
@@ -42,16 +42,16 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(emailIsSent);
         }
-        
+
         [Fact]
         public void Can_Send_Mail_With_String_Body_With_Attachment()
         {
             var emailIsSent = new Mailer()
                                .SetUpMessage()
-                                    .WithSubject("Mail Subject")
-                                    .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
-                                    .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                                    .WithAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
+                                    .Subject("Mail Subject")
+                                    .FromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
+                                    .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                                    .WithTheseAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
                                    .SetUpBody()
                                        .SetBodyEncoding(Encoding.UTF8)
                                        .SetBodyTransferEncoding(TransferEncoding.Unknown)
@@ -68,17 +68,17 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(emailIsSent);
         }
-       
+
         [Fact]
         public void Can_Send_Mail_With_String_Body_Add_BccAndCcEmails()
         {
             var emailIsSent = new Mailer()
                               .SetUpMessage()
-                                   .WithSubject("Mail Subject")
-                                   .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - Bcc and CC Emails"))
-                                   .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                                   .AddCcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
-                                   .AddBccMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
+                                   .Subject("Mail Subject")
+                                   .FromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - Bcc and CC Emails"))
+                                   .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                                   .CcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
+                                   .BccMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
                                    .SetUpBody()
                                       .SetBodyEncoding(Encoding.UTF8)
                                       .SetBodyTransferEncoding(TransferEncoding.Unknown)
@@ -101,9 +101,9 @@ namespace FluentEmailer.LJShole.Tests
         {
             var emailIsSent = new Mailer()
                             .SetUpMessage()
-                                 .WithSubject("Mail Subject Template")
-                                 .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - Template - No Attachments"))
-                                 .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                                 .Subject("Mail Subject Template")
+                                 .FromMailAddresses(new MailAddress(userName, "Fluent Email - Template - No Attachments"))
+                                 .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
                                  .SetUpBody()
                                     .SetBodyEncoding(Encoding.UTF8)
                                     .SetBodyTransferEncoding(TransferEncoding.Unknown)
@@ -120,18 +120,18 @@ namespace FluentEmailer.LJShole.Tests
                                 .WithPassword(password)
                             .Send();
 
-            Assert.True(emailIsSent);    
+            Assert.True(emailIsSent);
         }
-        
+
         [Fact]
         public void Can_Send_Mail_Using_Email_Template_With_Attachments()
         {
             var emailIsSent = new Mailer()
                             .SetUpMessage()
-                                 .WithSubject("Mail Subject Template")
-                                 .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - Template - With Attachments"))
-                                 .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                                 .WithAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
+                                 .Subject("Mail Subject Template")
+                                 .FromMailAddresses(new MailAddress(userName, "Fluent Email - Template - With Attachments"))
+                                 .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                                 .WithTheseAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
                                  .SetUpBody()
                                     .SetBodyEncoding(Encoding.UTF8)
                                     .SetBodyTransferEncoding(TransferEncoding.Unknown)
@@ -156,9 +156,9 @@ namespace FluentEmailer.LJShole.Tests
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
                     .SetUpMessage()
-                        .WithSubject(string.Empty)
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .Subject(string.Empty)
+                        .FromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
+                        .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
                         .SetUpBody()
                             .Body()
                                 .UsingString("Test Body")
@@ -172,15 +172,15 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'subject')"));
         }
-        
+
         [Fact]
         public void Throws_ArgumentNullException_When_To_Email_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
                     .SetUpMessage()
-                        .WithSubject("Test Subject")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
-                        .AddToMailAddresses(null)
+                        .Subject("Test Subject")
+                        .FromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
+                        .ToMailAddresses(null)
                         .SetUpBody()
                             .Body()
                                 .UsingString("Test Body")
@@ -194,16 +194,16 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'toMailAddresses')"));
         }
-        
+
         [Fact]
         public void Throws_ArgumentNullException_When_Cc_Email_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
                     .SetUpMessage()
-                        .WithSubject("Test Subject")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .AddCcMailAddresses(null)
+                        .Subject("Test Subject")
+                        .FromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
+                        .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .CcMailAddresses(null)
                         .SetUpBody()
                             .Body()
                                 .UsingString("Test Body")
@@ -217,16 +217,16 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'ccMailAddresses')"));
         }
-        
+
         [Fact]
         public void Throws_ArgumentNullException_When_Bcc_Email_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
                     .SetUpMessage()
-                        .WithSubject("Test Subject")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .AddBccMailAddresses(null)
+                        .Subject("Test Subject")
+                        .FromMailAddresses(new MailAddress(userName, "Fluent Email - With Attachments"))
+                        .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .BccMailAddresses(null)
                         .SetUpBody()
                             .Body()
                                 .UsingString("Test Body")
@@ -240,15 +240,15 @@ namespace FluentEmailer.LJShole.Tests
 
             Assert.True(response.Message.Equals($"Value cannot be null. (Parameter 'bccMailAddresses')"));
         }
-       
+
         [Fact]
         public void Throws_ArgumentNullException_When_From_Email_Is_Not_Provided()
         {
             var response = Assert.Throws<ArgumentNullException>(() => new Mailer()
                     .SetUpMessage()
-                        .WithSubject("Test Subject")
-                        .AddFromMailAddresses(null)
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .Subject("Test Subject")
+                        .FromMailAddresses(null)
+                        .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
                         .SetUpBody()
                            .Body()
                              .UsingString("Test Body")
@@ -268,11 +268,11 @@ namespace FluentEmailer.LJShole.Tests
         {
             var emailIsSent = new Mailer()
                     .SetUpMessage()
-                        .WithSubject("Mail Subject")
-                        .AddFromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - With ReplyTo"))
-                        .AddToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
-                        .SetSubjectEncoding(Encoding.UTF8)
-                        .WithReplyTo(new MailAddress("info@creativemode.co.za"))
+                        .Subject("Mail Subject")
+                        .FromMailAddresses(new MailAddress(userName, "Fluent Email - No Attachments - With ReplyTo"))
+                        .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .SubjectEncoding(Encoding.UTF8)
+                        .ReplyTo(new MailAddress("info@creativemode.co.za"))
                         .SetUpBody()
                             .SetBodyEncoding(Encoding.UTF8)
                             .SetBodyTransferEncoding(TransferEncoding.Unknown)
@@ -286,6 +286,28 @@ namespace FluentEmailer.LJShole.Tests
                         .WithUserName(userName)
                         .WithPassword(password)
                     .Send();
+
+            Assert.True(emailIsSent);
+        }
+        [Fact]
+        public void Can_Send_Mail_Using_Injected_Credentials()
+        {
+            var emailIsSent = new Mailer(new MailCredentials { PortNumber = portNumber, HostServer = hostName, Password = password, UserName = userName })
+                    .SetUpMessage()
+                        .Subject("Mail Subject")
+                        .FromMailAddresses(new MailAddress(userName, "Fluent Email - Injected  Credentials"))
+                        .ToMailAddresses(new List<MailAddress> { new MailAddress(toEmail) })
+                        .SubjectEncoding(Encoding.UTF8)
+                        .ReplyTo(new MailAddress("info@creativemode.co.za"))
+                        .SetUpBody()
+                            .SetBodyEncoding(Encoding.UTF8)
+                            .SetBodyTransferEncoding(TransferEncoding.Unknown)
+                            .Body()
+                                .UsingString("This is me Testing")
+                                .SetBodyIsHtmlFlag()
+                   .SetPriority(MailPriority.Normal)
+                   .UsingTheInjectedCredentials()
+                   .Send();
 
             Assert.True(emailIsSent);
         }

@@ -12,7 +12,10 @@ namespace FluentEmailer.LJShole
         internal bool _serverRequiresSsl;
         internal IMailer _mailer;
         internal NetworkCredential _networkCredential;
+        public MailCredentials()
+        {
 
+        }
         public MailCredentials(Mailer mailer)
         {
             _mailer = mailer;
@@ -71,12 +74,12 @@ namespace FluentEmailer.LJShole
 
         public bool HostServerRequiresSsl { get { return _serverRequiresSsl; } }
 
-        public string PortNumber { get { return _portNumber; } }
+        public string PortNumber { get { return _portNumber; }  set { _portNumber = value; } }
 
-        public string HostServer { get { return _hostServer; } }
+        public string HostServer { get { return _hostServer; } set { _hostServer = value; } }
 
-        public string Password { get { return _password; } }
+        public string Password { get { return _password; } set { _password = value; } }
 
-        public string UserName { get { return _userName; } }
+        public string UserName { get { return _userName; } set { _userName = value; } }
     }
 }

@@ -17,6 +17,16 @@ namespace FluentEmailer.LJShole
         private IMailCredentials _mailCredentials;
         private NetworkCredential _networkCredential;
 
+        public Mailer()
+        {
+
+        }
+
+        public Mailer(IMailCredentials mailCredentialSettings)
+        {
+            _mailCredentials = mailCredentialSettings;
+        }
+       
         /// <summary>
         /// Bootstrap the email creation process.
         /// </summary>

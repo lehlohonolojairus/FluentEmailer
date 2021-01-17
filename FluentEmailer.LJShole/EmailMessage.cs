@@ -70,13 +70,24 @@ namespace FluentEmailer.LJShole
             _mailCredentials = _mailCredentials ?? new MailCredentials(_mailer);
             return _mailCredentials;
         }
+        /// <summary>
+        /// Set up SMTP /IMAP server credentials.
+        /// </summary>
+        /// <returns></returns>
+        public IMailer UsingTheInjectedCredentials()
+        {
+            var networkCredential = new NetworkCredential(_mailer.MailCredentials.UserName, _mailer.MailCredentials.Password);
+
+            _mailer.SetNetworkCredential(networkCredential);
+            return _mailer;
+        }
 
         /// <summary>
         /// Sets the subject of the email.
         /// </summary>
         /// <param name="subject"></param>
         /// <returns></returns>
-        public IEmailMessage WithSubject(string subject)
+        public IEmailMessage Subject(string subject)
         {
             if (string.IsNullOrEmpty(subject))
                 throw new ArgumentNullException(nameof(subject));
@@ -90,7 +101,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="toMailAddresses">List of email addresses to receive the email.</param>
         /// <returns></returns>
-        public IEmailMessage AddToMailAddresses(List<MailAddress> toMailAddresses)
+        public IEmailMessage ToMailAddresses(List<MailAddress> toMailAddresses)
         {
             if (toMailAddresses == null || toMailAddresses.Count == 0)
                 throw new ArgumentNullException(nameof(toMailAddresses));
@@ -104,7 +115,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="ccMailAddresses">List of CC email addresses to receive the email.</param>
         /// <returns></returns>
-        public IEmailMessage AddCcMailAddresses(List<MailAddress> ccMailAddresses)
+        public IEmailMessage CcMailAddresses(List<MailAddress> ccMailAddresses)
         {
             if (ccMailAddresses == null || ccMailAddresses.Count == 0)
                 throw new ArgumentNullException(nameof(ccMailAddresses));
@@ -117,7 +128,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="bccMailAddresses">List of BCC email addresses to receive the email.</param>
         /// <returns></returns>
-        public IEmailMessage AddBccMailAddresses(List<MailAddress> bccMailAddresses)
+        public IEmailMessage BccMailAddresses(List<MailAddress> bccMailAddresses)
         {
             if (bccMailAddresses == null || bccMailAddresses.Count == 0)
                 throw new ArgumentNullException(nameof(bccMailAddresses));
@@ -130,7 +141,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="fromMailAddress">From email address for recepients to know where the email originated from.</param>
         /// <returns></returns>
-        public IEmailMessage AddFromMailAddresses(MailAddress fromMailAddress)
+        public IEmailMessage FromMailAddresses(MailAddress fromMailAddress)
         {
             if (fromMailAddress == null || string.IsNullOrEmpty(fromMailAddress.Address))
                 throw new ArgumentNullException(nameof(fromMailAddress));
@@ -144,7 +155,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="attachments">File attachments to attach to the email message.</param>
         /// <returns></returns>
-        public IEmailMessage WithAttachments(List<Attachment> attachments)
+        public IEmailMessage WithTheseAttachments(List<Attachment> attachments)
         {
             if (attachments == null || attachments.Count == 0)
                 throw new ArgumentNullException(nameof(attachments));
@@ -192,7 +203,7 @@ namespace FluentEmailer.LJShole
             return message;
         }
 
-        public IEmailMessage SetSubjectEncoding(Encoding encoding)
+        public IEmailMessage SubjectEncoding(Encoding encoding)
         {
             _subjectEncoding = encoding;
             return this;
@@ -204,7 +215,7 @@ namespace FluentEmailer.LJShole
             return this;
         }
 
-        public IEmailMessage WithReplyTo(MailAddress replyToEmail)
+        public IEmailMessage ReplyTo(MailAddress replyToEmail)
         {
             _replyToEmail = replyToEmail;
             return this;
