@@ -6,6 +6,7 @@ namespace FluentEmailer.LJShole.Interfaces
     {
         IEmailBodySetter CompileTemplate();
         IEmailTemplate UsingEmailTemplate(string templateLocation);
+        IEmailTemplate UsingEmailTemplate(string templateLocation,Dictionary<string,string> templateValues);
         IEmailBodySetter UsingString(string emailBody);
         IEmailTemplate UsingTemplateDictionary(Dictionary<string, string> templateValues);
     }
