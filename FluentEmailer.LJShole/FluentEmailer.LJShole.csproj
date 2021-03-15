@@ -11,15 +11,19 @@
     <PackageProjectUrl>https://github.com/lehlohonolojairus/FluentEmailer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/lehlohonolojairus/FluentEmailer</RepositoryUrl>
     <PackageTags>.NET Core Email, Fluent API , Email</PackageTags>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-    <Version>1.0.3</Version>
-    <PackageReleaseNotes>V 1.0.3
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
+    <Version>1.0.4</Version>
+    <PackageReleaseNotes>V1.0.4
+- Added an overload when specifying the template location to allow the user to provide the templateValues on the same line of code.
+
+V 1.0.3
 
 - Added support for Reply-To field, 
 - Support for subject encoding.
 - Support for both body encoding and body transfer encoding.
 </PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
