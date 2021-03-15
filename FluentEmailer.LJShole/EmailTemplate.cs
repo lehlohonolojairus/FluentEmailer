@@ -52,6 +52,26 @@ namespace FluentEmailer.LJShole
             _templateValues = templateValues;
             return this;
         }
+
+        /// <summary>
+        /// The body of the email will use this template file. 
+        /// </summary>
+        /// <param name="templateLocation">Location of the template file to use as the body of the email. NB This does not support URI's.</param>
+        /// <param name="templateValues"></param>
+        /// <returns></returns>
+        public IEmailTemplate UsingEmailTemplate(string templateLocation, Dictionary<string, string> templateValues)
+        {
+            if (string.IsNullOrEmpty(templateLocation))
+                throw new ArgumentNullException(nameof(templateLocation));
+
+            if (templateValues == null || templateValues.Keys.Count == 0)
+                throw new InvalidOperationException("Template values are required.");
+
+            _templateLocation = templateLocation;
+            _templateValues = templateValues;
+            return this;
+        }
+
         /// <summary>
         /// Sets the body of the email to a this string.
         /// </summary>
