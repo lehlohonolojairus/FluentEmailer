@@ -9,17 +9,15 @@ namespace FluentEmailer.LJShole
     /// <summary>
     /// Mail message body set up class.
     /// </summary>
-    public class EmailBody : IEmailBody
+    public class EmailBodySetter : IEmailBodySetter
     {
         private IEmailTemplate _emailTemplate;
         private readonly IEmailMessage _emailMessage;
         private readonly IMailer _mailer;
         private bool _emailBodyIsHtml;
-        private readonly IEmailBody _emailBodyInstance;
+        private readonly IEmailBodySetter _emailBodyInstance;
 
-        public bool EmailBodyIsHtml { get { return _emailBodyIsHtml; } }
-
-        public EmailBody(IEmailMessage emailMessage, IMailer mailer)
+        public EmailBodySetter(IEmailMessage emailMessage, IMailer mailer)
         {
             _emailMessage = emailMessage;
             _mailer = mailer;
@@ -40,7 +38,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="encoding">Encoding value</param>
         /// <returns></returns>
-        public IEmailBody SetBodyEncoding(Encoding encoding)
+        public IEmailBodySetter SetBodyEncoding(Encoding encoding)
         {
             (_emailMessage as EmailMessage).SetBodyEncoding(encoding);
             return this;
@@ -51,7 +49,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="transferEncoding">TransferEncoding value</param>
         /// <returns></returns>
-        public IEmailBody SetBodyTransferEncoding(TransferEncoding transferEncoding)
+        public IEmailBodySetter SetBodyTransferEncoding(TransferEncoding transferEncoding)
         {
             (_emailMessage as EmailMessage).SetBodyTransferEncoding(transferEncoding);
             return this;
@@ -68,5 +66,7 @@ namespace FluentEmailer.LJShole
             (_emailMessage as EmailMessage).SetMessageInstance(this);
             return _emailMessage;
         }
+
+        public bool EmailBodyIsHtml { get { return _emailBodyIsHtml; } }
     }
 }

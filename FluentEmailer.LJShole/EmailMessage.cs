@@ -11,7 +11,6 @@ namespace FluentEmailer.LJShole
 {
     public class EmailMessage : IEmailMessage
     {
-        private EmailTemplate _template;
         private readonly Mailer _mailer;
         private IMailCredentials _mailCredentials;
         private string _subject;
@@ -28,7 +27,7 @@ namespace FluentEmailer.LJShole
         private MailAddressCollection _replyToEmails;
         private Encoding _subjectEncoding;
 
-        internal EmailBody EmailBodyInstance { get; set; }
+        internal EmailBodySetter EmailBodySetter { get; set; }
 
         internal void SetBodyEncoding(Encoding encoding)
         {
@@ -40,9 +39,9 @@ namespace FluentEmailer.LJShole
             _mailer = mailer;
         }
 
-        internal void SetMessageInstance(EmailBody emailBody)
+        internal void SetMessageInstance(EmailBodySetter emailBody)
         {
-            this.EmailBodyInstance = emailBody;
+            this.EmailBodySetter = emailBody;
         }
 
         internal void SetBodyTransferEncoding(TransferEncoding transferEncoding)
@@ -54,11 +53,10 @@ namespace FluentEmailer.LJShole
         /// Bootstrapper for setting up the body of the email to be sent.
         /// </summary>
         /// <returns></returns>
-        public IEmailBody SetUpBody()
+        public IEmailBodySetter SetUpBody()
         {
-            EmailBodyInstance = EmailBodyInstance ?? new EmailBody(this, _mailer);
-            _template = _template ?? new EmailTemplate(this, _mailer, EmailBodyInstance);
-            return EmailBodyInstance;
+            EmailBodySetter = EmailBodySetter ?? new EmailBodySetter(this, _mailer);
+            return EmailBodySetter;
         }
 
         /// <summary>
@@ -181,7 +179,7 @@ namespace FluentEmailer.LJShole
             _ccMailAddresses?.ForEach(address => { message.To.Add(address); });
             _bccMailAddresses?.ForEach(address => { message.To.Add(address); });
             _attachments?.ForEach(attachment => { message.Attachments.Add(attachment); });
-            message.IsBodyHtml = EmailBodyInstance.EmailBodyIsHtml;
+            message.IsBodyHtml = EmailBodySetter.EmailBodyIsHtml;
             message.Priority = _priority;
             message.Body = _body;
             message.BodyEncoding = _bodyEncoding;

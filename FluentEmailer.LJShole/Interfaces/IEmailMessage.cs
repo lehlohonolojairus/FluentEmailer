@@ -11,7 +11,7 @@ namespace FluentEmailer.LJShole.Interfaces
         IEmailMessage FromMailAddresses(MailAddress fromMailAddress);
         IEmailMessage ToMailAddresses(List<MailAddress> toMailAddresses);       
         IEmailMessage WithTheseAttachments(List<Attachment> attachments);
-        IEmailBody SetUpBody();      
+        IEmailBodySetter SetUpBody();      
         IMailCredentials WithCredentials();
         IMailer UsingTheInjectedCredentials();
         IEmailMessage Subject(string subject);

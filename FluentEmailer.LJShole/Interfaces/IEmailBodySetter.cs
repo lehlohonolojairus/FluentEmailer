@@ -3,11 +3,11 @@ using System.Text;
 
 namespace FluentEmailer.LJShole.Interfaces
 {
-    public interface IEmailBody
+    public interface IEmailBodySetter
     {
         IEmailTemplate Body();
-        IEmailBody SetBodyTransferEncoding(TransferEncoding transferEncoding);
-        IEmailBody SetBodyEncoding(Encoding encoding);
+        IEmailBodySetter SetBodyTransferEncoding(TransferEncoding transferEncoding);
+        IEmailBodySetter SetBodyEncoding(Encoding encoding);
         IEmailMessage SetBodyIsHtmlFlag(bool emailBodyIsHtml = true);
     }
 }
