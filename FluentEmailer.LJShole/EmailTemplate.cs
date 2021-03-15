@@ -14,11 +14,11 @@ namespace FluentEmailer.LJShole
         private readonly IMailer _mailer;
         private readonly IEmailMessage _emailMessage;
         private string _emailBody;
-        private IEmailBody _emailBodyInstance;
+        private IEmailBodySetter _emailBodyInstance;
         private string _templateLocation;
         private Dictionary<string, string> _templateValues;
 
-        public EmailTemplate(IEmailMessage emailMessage, IMailer mailer, IEmailBody emailBody)
+        public EmailTemplate(IEmailMessage emailMessage, IMailer mailer, IEmailBodySetter emailBody)
         {
             _emailMessage = emailMessage;
             _mailer = mailer;
@@ -57,7 +57,7 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="emailBody"></param>
         /// <returns></returns>
-        public IEmailBody UsingString(string emailBody)
+        public IEmailBodySetter UsingString(string emailBody)
         {
             if (string.IsNullOrEmpty(emailBody))
                 throw new ArgumentNullException(nameof(emailBody));
@@ -65,14 +65,14 @@ namespace FluentEmailer.LJShole
             _emailBody = emailBody;
 
            ( _emailMessage as EmailMessage).SetBody(_emailBody);
-            _emailBodyInstance = _emailBodyInstance ?? new EmailBody(_emailMessage, _mailer);
+            _emailBodyInstance = _emailBodyInstance ?? new EmailBodySetter(_emailMessage, _mailer);
             return _emailBodyInstance;
         }
         /// <summary>
         /// Replaces the placeholders in the template file with the dictionary specified in the 'UsingTemplateDictionary' method.
         /// </summary>
         /// <returns></returns>
-        public IEmailBody CompileTemplate()
+        public IEmailBodySetter CompileTemplate()
         {
             if (string.IsNullOrEmpty(_emailBody))
             {
@@ -88,7 +88,7 @@ namespace FluentEmailer.LJShole
 
            ( _emailMessage as EmailMessage).SetBody(_emailBody);
             
-            _emailBodyInstance = _emailBodyInstance ?? new EmailBody(_emailMessage, _mailer);
+            _emailBodyInstance = _emailBodyInstance ?? new EmailBodySetter(_emailMessage, _mailer);
 
             return _emailBodyInstance;
         }

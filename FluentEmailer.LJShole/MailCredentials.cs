@@ -11,12 +11,15 @@ namespace FluentEmailer.LJShole
         internal string _password;
         internal bool _serverRequiresSsl;
         internal IMailer _mailer;
-        internal NetworkCredential _networkCredential;
+        public MailCredentials()
+        {
 
+        }
         public MailCredentials(Mailer mailer)
         {
             _mailer = mailer;
         }
+        
         /// <summary>
         /// The SMTP / IMAP server.
         /// </summary>
@@ -27,6 +30,7 @@ namespace FluentEmailer.LJShole
             _hostServer = hostServer;
             return this;
         }
+        
         /// <summary>
         /// The port number to use when sending emails.
         /// </summary>
@@ -53,6 +57,7 @@ namespace FluentEmailer.LJShole
             _serverRequiresSsl = serverRequiresSsl;
             return this;
         }
+        
         /// <summary>
         /// Set the password associated with the userName / email address.
         /// </summary>
@@ -61,22 +66,20 @@ namespace FluentEmailer.LJShole
         public IMailer WithPassword(string password)
         {
             _password = password;
-            _networkCredential = new NetworkCredential(_userName, _password);
 
             (_mailer as Mailer).SetMailCredentials(this);
-            (_mailer as Mailer).SetNetworkCredential(_networkCredential);
             
             return _mailer;
         }
 
         public bool HostServerRequiresSsl { get { return _serverRequiresSsl; } }
 
-        public string PortNumber { get { return _portNumber; } }
+        public string PortNumber { get { return _portNumber; }  set { _portNumber = value; } }
 
-        public string HostServer { get { return _hostServer; } }
+        public string HostServer { get { return _hostServer; } set { _hostServer = value; } }
 
-        public string Password { get { return _password; } }
+        public string Password { get { return _password; } set { _password = value; } }
 
-        public string UserName { get { return _userName; } }
+        public string UserName { get { return _userName; } set { _userName = value; } }
     }
 }

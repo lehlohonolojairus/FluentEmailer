@@ -17,6 +17,16 @@ namespace FluentEmailer.LJShole
         private IMailCredentials _mailCredentials;
         private NetworkCredential _networkCredential;
 
+        public Mailer()
+        {
+
+        }
+
+        public Mailer(IMailCredentials mailCredentialSettings)
+        {
+            _mailCredentials = mailCredentialSettings;
+        }
+
         /// <summary>
         /// Bootstrap the email creation process.
         /// </summary>
@@ -34,70 +44,15 @@ namespace FluentEmailer.LJShole
         /// <returns></returns>
         public bool Send()
         {
-            try
+            _networkCredential = _networkCredential ?? new NetworkCredential(_mailCredentials.UserName, _mailCredentials.Password);
+            var mailMsg = _mailMessage.GetMessage();
+            SmtpClient smtpClient = new SmtpClient(_mailCredentials.HostServer, int.Parse(_mailCredentials.PortNumber))
             {
-                var mailMsg = _mailMessage.GetMessage();
-                SmtpClient smtpClient = new SmtpClient(_mailCredentials.HostServer, int.Parse(_mailCredentials.PortNumber))
-                {
-                    Credentials = _networkCredential,
-                    EnableSsl = _mailCredentials.HostServerRequiresSsl
-                };
-                smtpClient.Send(mailMsg);
-                return true;
-            }
-            catch (ArgumentNullException)
-            {
-                // message is null
-                throw;
-            }
-            catch (ObjectDisposedException)
-            {
-                //     This object has been disposed.
-                throw;
-            }
-            catch (SmtpFailedRecipientsException)
-            {
-                //     The message could not be delivered to two or more of the recipients in System.Net.Mail.MailMessage.To,
-                //     System.Net.Mail.MailMessage.CC, or System.Net.Mail.MailMessage.Bcc.
-                throw;
-            }
-            catch (SmtpFailedRecipientException)
-            {
-                //     The message could not be delivered to one of the recipients in System.Net.Mail.MailMessage.To,
-                //     System.Net.Mail.MailMessage.CC, or System.Net.Mail.MailMessage.Bcc.
-                throw;
-            }
-            catch (SmtpException)
-            {
-                //     The connection to the SMTP server failed. - or - Authentication failed. - or - The
-                //     operation timed out. -or- System.Net.Mail.SmtpClient.EnableSsl is set to true
-                //     but the System.Net.Mail.SmtpClient.DeliveryMethod property is set to System.Net.Mail.SmtpDeliveryMethod.SpecifiedPickupDirectory
-                //     or System.Net.Mail.SmtpDeliveryMethod.PickupDirectoryFromIis. -or- System.Net.Mail.SmtpClient.EnableSsl
-                //     is set to true, but the SMTP mail server did not advertise STARTTLS in the response
-                //     to the EHLO command.
-                throw;
-            }
-            catch (InvalidOperationException)
-            {
-                //     This System.Net.Mail.SmtpClient has a Overload:System.Net.Mail.SmtpClient.SendAsync
-                //     call in progress. -or- System.Net.Mail.MailMessage.From is null. -or- There are
-                //     no recipients specified in System.Net.Mail.MailMessage.To, System.Net.Mail.MailMessage.CC,
-                //     and System.Net.Mail.MailMessage.Bcc properties. -or- System.Net.Mail.SmtpClient.DeliveryMethod
-                //     property is set to System.Net.Mail.SmtpDeliveryMethod.Network and System.Net.Mail.SmtpClient.Host
-                //     is null. -or- System.Net.Mail.SmtpClient.DeliveryMethod property is set to System.Net.Mail.SmtpDeliveryMethod.Network
-                //     and System.Net.Mail.SmtpClient.Host is equal to the empty string (""). -or- System.Net.Mail.SmtpClient.DeliveryMethod
-                //     property is set to System.Net.Mail.SmtpDeliveryMethod.Network and System.Net.Mail.SmtpClient.Port
-                //     is zero, a negative number, or greater than 65,535.
-                throw;
-            }
-            catch (FileNotFoundException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+                Credentials = _networkCredential,
+                EnableSsl = _mailCredentials.HostServerRequiresSsl
+            };
+            smtpClient.Send(mailMsg);
+            return true;
         }
 
         /// <summary>
@@ -106,73 +61,18 @@ namespace FluentEmailer.LJShole
         /// <returns></returns>
         public async Task<bool> SendAsync()
         {
-            try
-            {
-                return await Task.Run(() =>
-                {
-                    var mailMsg = _mailMessage.GetMessage();
-                    SmtpClient smtpClient = new SmtpClient(_mailCredentials.HostServer, int.Parse(_mailCredentials.PortNumber))
-                    {
-                        Credentials = _networkCredential,
-                        EnableSsl = _mailCredentials.HostServerRequiresSsl
-                    };
-                    smtpClient.Send(mailMsg);
-                    return true;
-                });
-            }
-            catch (ArgumentNullException)
-            {
-                // message is null
-                throw;
-            }
-            catch (ObjectDisposedException)
-            {
-                //     This object has been disposed.
-                throw;
-            }
-            catch (SmtpFailedRecipientsException)
-            {
-                //     The message could not be delivered to two or more of the recipients in System.Net.Mail.MailMessage.To,
-                //     System.Net.Mail.MailMessage.CC, or System.Net.Mail.MailMessage.Bcc.
-                throw;
-            }
-            catch (SmtpFailedRecipientException)
-            {
-                //     The message could not be delivered to one of the recipients in System.Net.Mail.MailMessage.To,
-                //     System.Net.Mail.MailMessage.CC, or System.Net.Mail.MailMessage.Bcc.
-                throw;
-            }
-            catch (SmtpException)
-            {
-                //     The connection to the SMTP server failed. - or - Authentication failed. - or - The
-                //     operation timed out. -or- System.Net.Mail.SmtpClient.EnableSsl is set to true
-                //     but the System.Net.Mail.SmtpClient.DeliveryMethod property is set to System.Net.Mail.SmtpDeliveryMethod.SpecifiedPickupDirectory
-                //     or System.Net.Mail.SmtpDeliveryMethod.PickupDirectoryFromIis. -or- System.Net.Mail.SmtpClient.EnableSsl
-                //     is set to true, but the SMTP mail server did not advertise STARTTLS in the response
-                //     to the EHLO command.
-                throw;
-            }
-            catch (InvalidOperationException)
-            {
-                //     This System.Net.Mail.SmtpClient has a Overload:System.Net.Mail.SmtpClient.SendAsync
-                //     call in progress. -or- System.Net.Mail.MailMessage.From is null. -or- There are
-                //     no recipients specified in System.Net.Mail.MailMessage.To, System.Net.Mail.MailMessage.CC,
-                //     and System.Net.Mail.MailMessage.Bcc properties. -or- System.Net.Mail.SmtpClient.DeliveryMethod
-                //     property is set to System.Net.Mail.SmtpDeliveryMethod.Network and System.Net.Mail.SmtpClient.Host
-                //     is null. -or- System.Net.Mail.SmtpClient.DeliveryMethod property is set to System.Net.Mail.SmtpDeliveryMethod.Network
-                //     and System.Net.Mail.SmtpClient.Host is equal to the empty string (""). -or- System.Net.Mail.SmtpClient.DeliveryMethod
-                //     property is set to System.Net.Mail.SmtpDeliveryMethod.Network and System.Net.Mail.SmtpClient.Port
-                //     is zero, a negative number, or greater than 65,535.
-                throw;
-            }
-            catch (FileNotFoundException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return await Task.Run(() =>
+                  {
+                      _networkCredential = _networkCredential ?? new NetworkCredential(_mailCredentials.UserName, _mailCredentials.Password);
+                      var mailMsg = _mailMessage.GetMessage();
+                      SmtpClient smtpClient = new SmtpClient(_mailCredentials.HostServer, int.Parse(_mailCredentials.PortNumber))
+                      {
+                          Credentials = _networkCredential,
+                          EnableSsl = _mailCredentials.HostServerRequiresSsl
+                      };
+                      smtpClient.Send(mailMsg);
+                      return true;
+                  });
         }
 
         /// <summary>
@@ -183,7 +83,7 @@ namespace FluentEmailer.LJShole
         /// Returns the specified login mail credentials as configured on the SMTP / IMAP server.
         /// </summary>
         public IMailCredentials MailCredentials { get { return _mailCredentials; } }
-        
+
         internal void SetMailCredentials(IMailCredentials mailCredentials)
         {
             _mailCredentials = mailCredentials;
