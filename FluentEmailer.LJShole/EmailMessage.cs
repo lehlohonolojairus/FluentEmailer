@@ -1,6 +1,7 @@
 ﻿using FluentEmailer.LJShole.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -30,7 +31,7 @@ namespace FluentEmailer.LJShole
         private IEnumerable<MailAddress> _ccMailAddresses = new List<MailAddress>();
         private IEnumerable<MailAddress> _bccMailAddresses = new List<MailAddress>();
         private IEmailSender _emailSender;
-        internal EmailMessage(string hostServer, string portNumber, string userName, string password, bool sslRequired, IEnumerable<MailAddress> toEmailAddresses)
+        internal EmailMessage(string subject, string hostServer, string portNumber, string userName, string password, bool sslRequired, IEnumerable<MailAddress> toEmailAddresses)
         {
             _hostServer = hostServer;
             _portNumber = portNumber;
@@ -38,18 +39,25 @@ namespace FluentEmailer.LJShole
             _password = password;
             _sslRequired = sslRequired;
             _toMailAddresses = toEmailAddresses;
+            _subject = subject;
         }
-        public IEmailMessage SetBodyEncoding(Encoding encoding)
+        public IEmailMessage BodyEncoding(Encoding encoding)
         {
             _bodyEncoding = encoding;
             return this;
         }
 
-        public IEmailMessage SetBodyTransferEncoding(TransferEncoding transferEncoding)
+        public IEmailMessage BodyTransferEncoding(TransferEncoding transferEncoding)
         {
             _transferEncoding = transferEncoding;
             return this;
         }
+
+        /// <summary>
+        /// Set the encoding type of the subject. Default is UTF8
+        /// </summary>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
         public IEmailMessage SubjectEncoding(Encoding encoding)
         {
             _subjectEncoding = encoding;
@@ -132,24 +140,29 @@ namespace FluentEmailer.LJShole
         {
             if (attachments == null || attachments.Count() == 0)
                 throw new ArgumentNullException(nameof(attachments));
+
             _attachments = attachments;
+
             return this;
         }
 
         public IEmailMessage SetPriority(MailPriority mailPriority)
         {
             _priority = mailPriority;
+
             return this;
         }
 
         public IEmailMessage ReplyTo(MailAddress replyToEmail)
         {
             _replyToEmail = replyToEmail;
+
             return this;
         }
         public IEmailMessage ReplyTo(MailAddressCollection replyToEmails)
         {
             _replyToEmails = replyToEmails;
+
             return this;
         }
 
@@ -166,9 +179,41 @@ namespace FluentEmailer.LJShole
             return _emailSender;
         }
 
-        public IEmailSender Body(IDictionary<string, string> templateValues,string TemplateFileLocation, bool bodyIsHTML = true)
+        public IEmailSender Body(IDictionary<string, string> templateValues, string TemplateFileLocation, bool bodyIsHTML = true)
         {
-            throw new NotImplementedException();
+            _bodyIsHTML = bodyIsHTML;
+
+            if (!File.Exists(TemplateFileLocation))
+                throw new FileNotFoundException(TemplateFileLocation);
+
+            _body = ReadTemplateFile(TemplateFileLocation, templateValues);
+
+            var message = CreateMailMessageInstance();
+
+            _emailSender = new EmailSender(message, _hostServer, _portNumber, _userName, _password, _sslRequired);
+
+            return _emailSender;
+        }
+
+        private string ReadTemplateFile(string templateFileLocation, IDictionary<string, string> templateValues)
+        {
+            try
+            {
+                using var reader = new StreamReader(templateFileLocation);
+
+                var templateContents = new StringBuilder();
+
+                templateContents.Append(reader.ReadToEnd());
+
+                foreach (var templateValue in templateValues)
+                    templateContents.Replace(templateValue.Key, templateValue.Value);
+
+                return templateContents.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private MailMessage CreateMailMessageInstance()
@@ -183,13 +228,15 @@ namespace FluentEmailer.LJShole
             var message = new MailMessage();
             message.From = _fromMailAddress;
             message.Body = _body;
+            message.Subject = _subject;
             message.IsBodyHtml = _bodyIsHTML;
             message.Priority = _priority;
             message.BodyEncoding = _bodyEncoding;
+            message.SubjectEncoding = _subjectEncoding;
             message.BodyTransferEncoding = _transferEncoding;
 
             _toMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
-            _ccMailAddresses ?.ToList().ForEach(address => { message.To.Add(address); });
+            _ccMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
             _bccMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
             _attachments?.ToList().ForEach(attachment => { message.Attachments.Add(attachment); });
 
@@ -210,6 +257,6 @@ namespace FluentEmailer.LJShole
             return message;
         }
 
-  
+
     }
 }

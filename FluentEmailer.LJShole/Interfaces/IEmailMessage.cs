@@ -17,12 +17,12 @@ namespace FluentEmailer.LJShole.Interfaces
         /// <param name="templateValues"></param>
         /// <param name="bodyIsHTML"></param>
         /// <returns></returns>
-        IEmailSender Body(IDictionary<string, string> templateValues,string TemplateFileLocation, bool bodyIsHTML = true);
+        IEmailSender Body(IDictionary<string, string> templateValues, string TemplateFileLocation, bool bodyIsHTML = true);
         IEmailMessage SubjectEncoding(Encoding encoding);
         IEmailMessage SetPriority(MailPriority mailPriority);
         IEmailMessage ReplyTo(MailAddress replyToEmail);
-        IEmailMessage SetBodyEncoding(Encoding encoding);
-        IEmailMessage SetBodyTransferEncoding(TransferEncoding transferEncoding);
+        IEmailMessage BodyEncoding(Encoding encoding);
+        IEmailMessage BodyTransferEncoding(TransferEncoding transferEncoding);
         IEmailMessage FromMailAddresses(MailAddress fromMailAddress);
     }
 }

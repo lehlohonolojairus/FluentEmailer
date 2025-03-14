@@ -1,7 +1,4 @@
-﻿using System.Net;
-using System.Threading.Tasks;
-
-namespace FluentEmailer.LJShole.Interfaces
+﻿namespace FluentEmailer.LJShole.Interfaces
 {
     /// <summary>
     /// The main entry point of the package. Starts up the process of crafting your email(s).
@@ -18,6 +15,5 @@ namespace FluentEmailer.LJShole.Interfaces
         /// <param name="sslRequired">Indicate if the connection to the server required SSL or not, default is true.</param>
         /// <returns></returns>
         ISMTPServer UsingSMTPServer(string hostServer, string portNumber, string userName, string password, bool sslRequired = true);
-        ISMTPServer UsingSendGrid(string ApiKey);
     }
 }

@@ -38,13 +38,9 @@ namespace FluentEmailer.LJShole
                 {
                     Credentials = _networkCredential,
                     EnableSsl = _sslRequired,
-                    //DeliveryFormat = SmtpDeliveryFormat.International,
                     Host = _hostServer,
                     Port = int.Parse(_portNumber),
-                   // UseDefaultCredentials = false,
-                   // DeliveryMethod = SmtpDeliveryMethod.Network,
                 };
-                // smtpClient.Timeout = 100000;
                 smtpClient.Send(_message);
                 return true;
             }
@@ -55,7 +51,7 @@ namespace FluentEmailer.LJShole
         }
 
         /// <summary>
-        /// Sends out the email.
+        /// Sends out the email asynchronously.
         /// </summary>
         /// <returns></returns>
         public async Task<bool> SendAsync()
@@ -66,7 +62,9 @@ namespace FluentEmailer.LJShole
                 SmtpClient smtpClient = new SmtpClient(_hostServer, int.Parse(_portNumber))
                 {
                     Credentials = _networkCredential,
-                    EnableSsl = _sslRequired
+                    EnableSsl = _sslRequired,
+                    Host = _hostServer,
+                    Port = int.Parse(_portNumber),
                 };
                 smtpClient.Send(_message);
                 return true;

@@ -36,7 +36,7 @@ namespace FluentEmailer.LJShole
 
             if (fromMailAddress == null || string.IsNullOrWhiteSpace(fromMailAddress.Address)) throw new ArgumentNullException(nameof(fromMailAddress));
 
-            _mailMessage = new EmailMessage(_hostServer, _portNumber, _userName, _password, _sslRequired, toEmailAddresses);
+            _mailMessage = new EmailMessage(subject, _hostServer, _portNumber, _userName, _password, _sslRequired, toEmailAddresses);
 
             return _mailMessage;
         }
@@ -49,7 +49,7 @@ namespace FluentEmailer.LJShole
 
             if (fromMailAddress == null || string.IsNullOrWhiteSpace(fromMailAddress)) throw new ArgumentNullException(nameof(fromMailAddress));
 
-            _mailMessage = new EmailMessage(_hostServer, _portNumber, _userName, _password, _sslRequired, toEmailAddresses.Select(address => new MailAddress(address)).ToList());
+            _mailMessage = new EmailMessage(subject, _hostServer, _portNumber, _userName, _password, _sslRequired, toEmailAddresses.Select(address => new MailAddress(address)).ToList());
 
             return _mailMessage;
         }
