@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
@@ -11,75 +10,51 @@ namespace FluentEmailer.LJShole
 {
     public class EmailMessage : IEmailMessage
     {
-        private readonly Mailer _mailer;
-        private IMailCredentials _mailCredentials;
+        private readonly string _hostServer;
+        private readonly string _portNumber;
+        private readonly string _userName;
+        private readonly string _password;
+        private readonly bool _sslRequired;
         private string _subject;
         private string _body;
-        private List<MailAddress> _toMailAddresses = new List<MailAddress>();
-        private List<MailAddress> _ccMailAddresses = new List<MailAddress>();
-        private List<MailAddress> _bccMailAddresses = new List<MailAddress>();
-        private MailAddress _fromMailAddress;
-        private List<Attachment> _attachments;
-        private TransferEncoding _transferEncoding;
-        private Encoding _bodyEncoding;
-        private MailPriority _priority;
+        private bool _bodyIsHTML;
+        private Encoding _bodyEncoding = Encoding.UTF8;
+        private MailPriority _priority = MailPriority.Normal;
         private MailAddress _replyToEmail;
+        private Encoding _subjectEncoding = Encoding.UTF8;
+        private MailAddress _fromMailAddress;
+        private IEnumerable<Attachment> _attachments;
+        private TransferEncoding _transferEncoding = TransferEncoding.Unknown;
         private MailAddressCollection _replyToEmails;
-        private Encoding _subjectEncoding;
-
-        internal EmailBodySetter EmailBodySetter { get; set; }
-
-        internal void SetBodyEncoding(Encoding encoding)
+        private IEnumerable<MailAddress> _toMailAddresses = new List<MailAddress>();
+        private IEnumerable<MailAddress> _ccMailAddresses = new List<MailAddress>();
+        private IEnumerable<MailAddress> _bccMailAddresses = new List<MailAddress>();
+        private IEmailSender _emailSender;
+        internal EmailMessage(string hostServer, string portNumber, string userName, string password, bool sslRequired, IEnumerable<MailAddress> toEmailAddresses)
+        {
+            _hostServer = hostServer;
+            _portNumber = portNumber;
+            _userName = userName;
+            _password = password;
+            _sslRequired = sslRequired;
+            _toMailAddresses = toEmailAddresses;
+        }
+        public IEmailMessage SetBodyEncoding(Encoding encoding)
         {
             _bodyEncoding = encoding;
+            return this;
         }
 
-        public EmailMessage(Mailer mailer)
-        {
-            _mailer = mailer;
-        }
-
-        internal void SetMessageInstance(EmailBodySetter emailBody)
-        {
-            this.EmailBodySetter = emailBody;
-        }
-
-        internal void SetBodyTransferEncoding(TransferEncoding transferEncoding)
+        public IEmailMessage SetBodyTransferEncoding(TransferEncoding transferEncoding)
         {
             _transferEncoding = transferEncoding;
+            return this;
         }
-
-        /// <summary>
-        /// Bootstrapper for setting up the body of the email to be sent.
-        /// </summary>
-        /// <returns></returns>
-        public IEmailBodySetter SetUpBody()
+        public IEmailMessage SubjectEncoding(Encoding encoding)
         {
-            EmailBodySetter = EmailBodySetter ?? new EmailBodySetter(this, _mailer);
-            return EmailBodySetter;
+            _subjectEncoding = encoding;
+            return this;
         }
-
-        /// <summary>
-        /// Set up SMTP /IMAP server credentials.
-        /// </summary>
-        /// <returns></returns>
-        public IMailCredentials WithCredentials()
-        {
-            _mailCredentials = _mailCredentials ?? new MailCredentials(_mailer);
-            return _mailCredentials;
-        }
-        /// <summary>
-        /// Set up SMTP /IMAP server credentials.
-        /// </summary>
-        /// <returns></returns>
-        public IMailer UsingTheInjectedCredentials()
-        {
-            var networkCredential = new NetworkCredential(_mailer.MailCredentials.UserName, _mailer.MailCredentials.Password);
-
-            _mailer.SetNetworkCredential(networkCredential);
-            return _mailer;
-        }
-
         /// <summary>
         /// Sets the subject of the email.
         /// </summary>
@@ -99,9 +74,9 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="toMailAddresses">List of email addresses to receive the email.</param>
         /// <returns></returns>
-        public IEmailMessage ToMailAddresses(List<MailAddress> toMailAddresses)
+        public IEmailMessage ToMailAddresses(IEnumerable<MailAddress> toMailAddresses)
         {
-            if (toMailAddresses == null || toMailAddresses.Count == 0)
+            if (toMailAddresses == null || toMailAddresses.Count() == 0)
                 throw new ArgumentNullException(nameof(toMailAddresses));
 
             _toMailAddresses = toMailAddresses;
@@ -113,9 +88,9 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="ccMailAddresses">List of CC email addresses to receive the email.</param>
         /// <returns></returns>
-        public IEmailMessage CcMailAddresses(List<MailAddress> ccMailAddresses)
+        public IEmailMessage CcMailAddresses(IEnumerable<MailAddress> ccMailAddresses)
         {
-            if (ccMailAddresses == null || ccMailAddresses.Count == 0)
+            if (ccMailAddresses == null || ccMailAddresses.Count() == 0)
                 throw new ArgumentNullException(nameof(ccMailAddresses));
             _ccMailAddresses = ccMailAddresses;
             return this;
@@ -126,9 +101,9 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="bccMailAddresses">List of BCC email addresses to receive the email.</param>
         /// <returns></returns>
-        public IEmailMessage BccMailAddresses(List<MailAddress> bccMailAddresses)
+        public IEmailMessage BccMailAddresses(IEnumerable<MailAddress> bccMailAddresses)
         {
-            if (bccMailAddresses == null || bccMailAddresses.Count == 0)
+            if (bccMailAddresses == null || bccMailAddresses.Count() == 0)
                 throw new ArgumentNullException(nameof(bccMailAddresses));
             _bccMailAddresses = bccMailAddresses;
             return this;
@@ -153,37 +128,71 @@ namespace FluentEmailer.LJShole
         /// </summary>
         /// <param name="attachments">File attachments to attach to the email message.</param>
         /// <returns></returns>
-        public IEmailMessage WithTheseAttachments(List<Attachment> attachments)
+        public IEmailMessage AddAttachments(IEnumerable<Attachment> attachments)
         {
-            if (attachments == null || attachments.Count == 0)
+            if (attachments == null || attachments.Count() == 0)
                 throw new ArgumentNullException(nameof(attachments));
             _attachments = attachments;
             return this;
         }
 
-        internal IEmailMessage SetBody(string emailBody)
+        public IEmailMessage SetPriority(MailPriority mailPriority)
         {
-            _body = emailBody;
+            _priority = mailPriority;
             return this;
         }
 
-        public MailMessage GetMessage()
+        public IEmailMessage ReplyTo(MailAddress replyToEmail)
         {
-            var message = new MailMessage
-            {
-                Subject = _subject,
-                From = _fromMailAddress
-            };
+            _replyToEmail = replyToEmail;
+            return this;
+        }
+        public IEmailMessage ReplyTo(MailAddressCollection replyToEmails)
+        {
+            _replyToEmails = replyToEmails;
+            return this;
+        }
 
-            _toMailAddresses.ForEach(address => { message.To.Add(address); });
-            _ccMailAddresses?.ForEach(address => { message.To.Add(address); });
-            _bccMailAddresses?.ForEach(address => { message.To.Add(address); });
-            _attachments?.ForEach(attachment => { message.Attachments.Add(attachment); });
-            message.IsBodyHtml = EmailBodySetter.EmailBodyIsHtml;
-            message.Priority = _priority;
+        public IEmailSender Body(string messageBody, bool bodyIsHTML = true)
+        {
+            _bodyIsHTML = bodyIsHTML;
+
+            _body = messageBody;
+
+            var message = CreateMailMessageInstance();
+
+            _emailSender = new EmailSender(message, _hostServer, _portNumber, _userName, _password, _sslRequired);
+
+            return _emailSender;
+        }
+
+        public IEmailSender Body(IDictionary<string, string> templateValues,string TemplateFileLocation, bool bodyIsHTML = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        private MailMessage CreateMailMessageInstance()
+        {
+            if (string.IsNullOrWhiteSpace(_body)) throw new ArgumentNullException(nameof(_body));
+
+            if (_fromMailAddress == null) throw new InvalidOperationException("From MailAddress is not set");
+
+            if (_toMailAddresses is null || _toMailAddresses.Count() == 0) throw new InvalidOperationException("Please set MailAddress(es) to send email to");
+
+
+            var message = new MailMessage();
+            message.From = _fromMailAddress;
             message.Body = _body;
+            message.IsBodyHtml = _bodyIsHTML;
+            message.Priority = _priority;
             message.BodyEncoding = _bodyEncoding;
             message.BodyTransferEncoding = _transferEncoding;
+
+            _toMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
+            _ccMailAddresses ?.ToList().ForEach(address => { message.To.Add(address); });
+            _bccMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
+            _attachments?.ToList().ForEach(attachment => { message.Attachments.Add(attachment); });
+
             if (_replyToEmails != null && _replyToEmails.Count > 0)
             {
                 _replyToEmails.ToList().ForEach(mail =>
@@ -201,27 +210,6 @@ namespace FluentEmailer.LJShole
             return message;
         }
 
-        public IEmailMessage SubjectEncoding(Encoding encoding)
-        {
-            _subjectEncoding = encoding;
-            return this;
-        }
-
-        public IEmailMessage SetPriority(MailPriority mailPriority)
-        {
-            _priority = mailPriority;
-            return this;
-        }
-
-        public IEmailMessage ReplyTo(MailAddress replyToEmail)
-        {
-            _replyToEmail = replyToEmail;
-            return this;
-        }
-        public IEmailMessage WithReplyTo(MailAddressCollection replyToEmails)
-        {
-            _replyToEmails = replyToEmails;
-            return this;
-        }
+  
     }
 }

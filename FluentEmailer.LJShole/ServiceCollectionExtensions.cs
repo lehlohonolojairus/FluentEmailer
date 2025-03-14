@@ -7,7 +7,7 @@ namespace FluentEmailer.LJShole
     {
         public static IServiceCollection AddFluentEmailer(this IServiceCollection services)
         {
-            services.AddScoped<IMailer, Mailer>();
+            services.AddScoped<IFluentEmail, FluentEmail>();
             return services;
         }
     }
