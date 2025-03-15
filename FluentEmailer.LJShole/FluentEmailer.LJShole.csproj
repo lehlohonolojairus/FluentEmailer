@@ -6,14 +6,14 @@
     <AssemblyName>FluentEmailer.LJShole</AssemblyName>
     <Authors>Lehlohonolo Jairus Shole</Authors>
     <Description>Fluent API to send emails in a .NET Core application using your own SMTP settings</Description>
-    <Copyright>2021</Copyright>
+    <Copyright>2025</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/lehlohonolojairus/FluentEmailer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/lehlohonolojairus/FluentEmailer</RepositoryUrl>
     <PackageTags>.NET Core Email, Fluent API , Email</PackageTags>
     <AssemblyVersion>1.0.4.0</AssemblyVersion>
     <FileVersion>1.0.4.0</FileVersion>
-    <Version>1.0.4</Version>
+    <Version>1.1.0</Version>
     <PackageReleaseNotes>V1.0.4
 - Added an overload when specifying the template location to allow the user to provide the templateValues on the same line of code.
 
@@ -24,7 +24,15 @@ V 1.0.3
 - Support for both body encoding and body transfer encoding.
 </PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
