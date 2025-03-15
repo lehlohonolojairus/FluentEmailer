@@ -71,6 +71,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Can_Send_Mail_Using_Email_Template_With_TemplateValues_No_Attachments()
         {
             var templateValues = new Dictionary<string, string> { { "{{subject}}", "Testing Message" }, { "{{body}}", "<section><h2>This is</h2><p>Welcome to our world</p></section>" } };
+            
             var emailIsSent = new FluentEmail()
                                     .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
                                     .Message("Fluent Email - Template File - No Attachments", new List<MailAddress> { new(toEmail) }, new(userName, "Fluent Email"))
@@ -87,6 +88,7 @@ namespace FluentEmailer.LJShole.Tests
         public void Can_Send_Mail_Using_Email_Template_With_TemplateValues_With_Attachments()
         {
             var templateValues = new Dictionary<string, string> { { "{{subject}}", "Testing Message" }, { "{{body}}", "<section><h2>This is</h2><p>Welcome to our world</p></section>" } };
+
             var emailIsSent = new FluentEmail()
                                     .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
                                     .Message("Fluent Email - Template File - With Attachments", new List<MailAddress> { new(toEmail) }, new(userName, "Fluent Email"))
