@@ -14,7 +14,10 @@
     <AssemblyVersion>1.0.4.0</AssemblyVersion>
     <FileVersion>1.0.4.0</FileVersion>
     <Version>1.1.0</Version>
-    <PackageReleaseNotes>V1.0.4
+    <PackageReleaseNotes>V 1.1.0 Changes
+- Future versions of the application / package will provide support for SendGrid, with this in mind, I have introduced breaking changes which pave way for the coming support. In addition, the change aims to make using the package much more intuitive and seemless. We do still support dependency injection. 
+
+V1.0.4
 - Added an overload when specifying the template location to allow the user to provide the templateValues on the same line of code.
 
 V 1.0.3
