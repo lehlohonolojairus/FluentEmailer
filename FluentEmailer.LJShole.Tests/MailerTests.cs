@@ -44,7 +44,7 @@ namespace FluentEmailer.LJShole.Tests
                                     .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
                                     .Message("Fluent Email - With Attachments", new List<MailAddress> { new(toEmail) }, new(userName, "Fluent Email"))
                                         .FromMailAddresses(new MailAddress(userName, "Testing Fluent Emailer"))
-                                        .AddAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
+                                        .AddAttachments([new($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}")])
                                     .Body("This is me Testing")
                                     .Send();
 
@@ -58,9 +58,9 @@ namespace FluentEmailer.LJShole.Tests
                                     .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
                                     .Message("Fluent Email - With Attachments - Bcc and CC Emails", new List<MailAddress> { new(toEmail) }, new(userName, "Fluent Email"))
                                         .FromMailAddresses(new MailAddress(userName, "Testing Fluent Emailer"))
-                                        .CcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
-                                        .CcMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
-                                        .AddAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
+                                        .CcMailAddresses([new MailAddress(ccEmail)])
+                                        .BccMailAddresses([new MailAddress(bccEmail)])
+                                        .AddAttachments([new($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}")])
                                     .Body("This is me Testing")
                                     .Send();
 
@@ -75,8 +75,8 @@ namespace FluentEmailer.LJShole.Tests
                                     .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
                                     .Message("Fluent Email - Template File - No Attachments", new List<MailAddress> { new(toEmail) }, new(userName, "Fluent Email"))
                                         .FromMailAddresses(new MailAddress(userName, "Testing Fluent Emailer"))
-                                        .CcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
-                                        .CcMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
+                                        .CcMailAddresses([new MailAddress(ccEmail)])
+                                        .BccMailAddresses([new MailAddress(bccEmail)])
                                     .Body(templateValues, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestHtmlPage.html"))
                                     .Send();
 
@@ -91,9 +91,9 @@ namespace FluentEmailer.LJShole.Tests
                                     .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
                                     .Message("Fluent Email - Template File - With Attachments", new List<MailAddress> { new(toEmail) }, new(userName, "Fluent Email"))
                                         .FromMailAddresses(new MailAddress(userName, "Testing Fluent Emailer"))
-                                        .CcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
-                                        .CcMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
-                                        .AddAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
+                                        .CcMailAddresses([new MailAddress(ccEmail)])
+                                        .BccMailAddresses([new MailAddress(bccEmail)])
+                                        .AddAttachments([new($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}")])
                                     .Body(templateValues, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestHtmlPage.html"))
                                     .Send();
 
@@ -107,9 +107,9 @@ namespace FluentEmailer.LJShole.Tests
                                     .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
                                     .Message("Fluent Email - With Attachments - Bcc and CC Emails", new List<MailAddress> { new(toEmail) }, new(userName, "Fluent Email"))
                                         .FromMailAddresses(new MailAddress(userName, "Testing Fluent Emailer"))
-                                        .CcMailAddresses(new List<MailAddress> { new MailAddress(ccEmail) })
-                                        .CcMailAddresses(new List<MailAddress> { new MailAddress(bccEmail) })
-                                        .AddAttachments(new List<Attachment> { new Attachment($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}") })
+                                        .CcMailAddresses([new MailAddress(ccEmail)])
+                                        .BccMailAddresses([new MailAddress(bccEmail)])
+                                        .AddAttachments([new($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SamplePDF.pdf")}")])
                                         .ReplyTo(new MailAddress(replyToEmail))
                                         .SubjectEncoding(Encoding.UTF8)
                                         .BodyEncoding(Encoding.UTF8)
@@ -182,7 +182,7 @@ namespace FluentEmailer.LJShole.Tests
         {
             var response = Assert.Throws<ArgumentNullException>(() => new FluentEmail()
                             .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
-                            .Message("Test Subject", new List<MailAddress> { new MailAddress(toEmail) }, new MailAddress(userName, "Fluent Email - No Attachments"))
+                            .Message("Test Subject", new List<MailAddress> { new(toEmail) }, new(userName, "Fluent Email - No Attachments"))
                                 .BodyTransferEncoding(TransferEncoding.Unknown)
                                 .FromMailAddresses(null)
                             .Body("This is me Testing")

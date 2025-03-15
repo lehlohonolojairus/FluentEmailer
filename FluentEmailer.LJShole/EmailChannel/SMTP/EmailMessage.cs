@@ -7,8 +7,11 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 
-namespace FluentEmailer.LJShole
+namespace FluentEmailer.LJShole.EmailChannel.SMTP
 {
+    /// <summary>
+    /// Mail message to be sent.
+    /// </summary>
     public class EmailMessage : IEmailMessage
     {
         private readonly string _hostServer;
@@ -41,12 +44,22 @@ namespace FluentEmailer.LJShole
             _toMailAddresses = toEmailAddresses;
             _subject = subject;
         }
+        /// <summary>
+        /// Set the encoding of the body. If you are using UTF8, no need to set this value.
+        /// </summary>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
         public IEmailMessage BodyEncoding(Encoding encoding)
         {
             _bodyEncoding = encoding;
             return this;
         }
 
+        /// <summary>
+        /// Set the body transfer encoding. If you are using Unknown, no need to set this value.
+        /// </summary>
+        /// <param name="transferEncoding"></param>
+        /// <returns></returns>
         public IEmailMessage BodyTransferEncoding(TransferEncoding transferEncoding)
         {
             _transferEncoding = transferEncoding;
@@ -146,6 +159,11 @@ namespace FluentEmailer.LJShole
             return this;
         }
 
+        /// <summary>
+        /// Set the priority level of the email.
+        /// </summary>
+        /// <param name="mailPriority"></param>
+        /// <returns></returns>
         public IEmailMessage SetPriority(MailPriority mailPriority)
         {
             _priority = mailPriority;
@@ -153,12 +171,22 @@ namespace FluentEmailer.LJShole
             return this;
         }
 
+        /// <summary>
+        /// Adds reply-to email address for the email.
+        /// </summary>
+        /// <param name="replyToEmail">The reply-to email address </param>
+        /// <returns></returns>
         public IEmailMessage ReplyTo(MailAddress replyToEmail)
         {
             _replyToEmail = replyToEmail;
 
             return this;
         }
+        /// <summary>
+        /// Adds reply-to email addresses for the email.
+        /// </summary>
+        /// <param name="replyToEmails">List of email addresses.</param>
+        /// <returns></returns>
         public IEmailMessage ReplyTo(MailAddressCollection replyToEmails)
         {
             _replyToEmails = replyToEmails;
@@ -166,6 +194,12 @@ namespace FluentEmailer.LJShole
             return this;
         }
 
+        /// <summary>
+        /// Sets the body of the email message.
+        /// </summary>
+        /// <param name="messageBody">Message body of the email.</param>
+        /// <param name="bodyIsHTML">Flag to set the body as HTML.</param>
+        /// <returns></returns>
         public IEmailSender Body(string messageBody, bool bodyIsHTML = true)
         {
             _bodyIsHTML = bodyIsHTML;
@@ -179,6 +213,14 @@ namespace FluentEmailer.LJShole
             return _emailSender;
         }
 
+        /// <summary>
+        /// Sets the body of the email message. This overload uses a template file (.html or txt) along with key-value dictionary that should be used to substitute placeholders in the template.
+        /// </summary>
+        /// <param name="templateValues">A dictionary containing keys found in the template with values that should be replaced in the template.</param>
+        /// <param name="TemplateFileLocation">File location of the template. Ensure this file is accessible by the application.</param>
+        /// <param name="bodyIsHTML">Flag to set the body as HTML.</param>
+        /// <returns></returns>
+        /// <exception cref="FileNotFoundException"></exception>
         public IEmailSender Body(IDictionary<string, string> templateValues, string TemplateFileLocation, bool bodyIsHTML = true)
         {
             _bodyIsHTML = bodyIsHTML;
@@ -210,7 +252,7 @@ namespace FluentEmailer.LJShole
 
                 return templateContents.ToString();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -225,15 +267,17 @@ namespace FluentEmailer.LJShole
             if (_toMailAddresses is null || _toMailAddresses.Count() == 0) throw new InvalidOperationException("Please set MailAddress(es) to send email to");
 
 
-            var message = new MailMessage();
-            message.From = _fromMailAddress;
-            message.Body = _body;
-            message.Subject = _subject;
-            message.IsBodyHtml = _bodyIsHTML;
-            message.Priority = _priority;
-            message.BodyEncoding = _bodyEncoding;
-            message.SubjectEncoding = _subjectEncoding;
-            message.BodyTransferEncoding = _transferEncoding;
+            var message = new MailMessage
+            {
+                From = _fromMailAddress,
+                Body = _body,
+                Subject = _subject,
+                IsBodyHtml = _bodyIsHTML,
+                Priority = _priority,
+                BodyEncoding = _bodyEncoding,
+                SubjectEncoding = _subjectEncoding,
+                BodyTransferEncoding = _transferEncoding
+            };
 
             _toMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
             _ccMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });

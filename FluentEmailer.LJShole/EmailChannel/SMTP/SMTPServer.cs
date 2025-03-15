@@ -1,21 +1,20 @@
-﻿using FluentEmailer.LJShole.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 
-namespace FluentEmailer.LJShole
+namespace FluentEmailer.LJShole.EmailChannel.SMTP
 {
     /// <summary>
-    /// Class for sending emails using SMTP/IMAP Server
+    /// Send emails using SMTP/IMAP Server
     /// </summary>
     public class SMTPServer : ISMTPServer
     {
-        private string _hostServer;
-        private string _portNumber;
-        private string _userName;
-        private string _password;
-        private bool _sslRequired;
+        private readonly string _hostServer;
+        private readonly string _portNumber;
+        private readonly string _userName;
+        private readonly string _password;
+        private readonly bool _sslRequired;
 
         private IEmailMessage _mailMessage;
 
@@ -28,6 +27,14 @@ namespace FluentEmailer.LJShole
             _sslRequired = sslRequired;
         }
 
+        /// <summary>
+        /// Set up the mail message to be sent.
+        /// </summary>
+        /// <param name="subject">Set the subject of the email</param>
+        /// <param name="toEmailAddresses">Set the email addresses the mail should be sent to.</param>
+        /// <param name="fromMailAddress">Set the sender of the email</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public IEmailMessage Message(string subject, IEnumerable<MailAddress> toEmailAddresses, MailAddress fromMailAddress)
         {
             if (string.IsNullOrEmpty(subject)) throw new ArgumentNullException(nameof(subject));
@@ -41,6 +48,15 @@ namespace FluentEmailer.LJShole
             return _mailMessage;
         }
 
+        /// <summary>
+        /// Set up the mail message to be sent.
+        /// </summary>
+        /// <param name="subject">Set the subject of the email</param>
+        /// <param name="toEmailAddresses">Set the email addresses the mail should be sent to.</param>
+        /// <param name="fromMailAddress">Set the sender of the email</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="FormatException">Thrown when the email address is not in the right format.</exception>
         public IEmailMessage Message(string subject, IEnumerable<string> toEmailAddresses, string fromMailAddress)
         {
             if (string.IsNullOrEmpty(subject)) throw new ArgumentNullException(nameof(subject));

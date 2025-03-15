@@ -7,13 +7,13 @@ namespace FluentEmailer.LJShole
 {
     public class EmailSender : IEmailSender
     {
-        private string _hostServer;
-        private string _portNumber;
-        private string _userName;
-        private string _password;
-        private bool _sslRequired;
+        private readonly string _hostServer;
+        private readonly string _portNumber;
+        private readonly string _userName;
+        private readonly string _password;
+        private readonly bool _sslRequired;
+        private readonly MailMessage _message;
         private NetworkCredential? _networkCredential;
-        private MailMessage _message { get; }
 
         internal EmailSender(MailMessage message, string hostServer, string portNumber, string userName, string password, bool sslRequired)
         {
@@ -44,7 +44,7 @@ namespace FluentEmailer.LJShole
                 smtpClient.Send(_message);
                 return true;
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 throw;
             }

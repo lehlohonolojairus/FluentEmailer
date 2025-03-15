@@ -1,4 +1,5 @@
-﻿using FluentEmailer.LJShole.Interfaces;
+﻿using FluentEmailer.LJShole.EmailChannel.SMTP;
+using FluentEmailer.LJShole.Interfaces;
 using System;
 
 namespace FluentEmailer.LJShole
