@@ -1,4 +1,6 @@
-﻿namespace FluentEmailer.LJShole.Interfaces
+﻿using FluentEmailer.LJShole.EmailChannel.SMTP;
+
+namespace FluentEmailer.LJShole.Interfaces
 {
     /// <summary>
     /// The main entry point of the package. Starts up the process of crafting your email(s).
