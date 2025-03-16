@@ -13,6 +13,22 @@ namespace FluentEmailer.LJShole.EmailChannel.SMTP
     public interface IEmailMessage
     {
         /// <summary>
+        /// To emal addresses list 
+        /// </summary>
+        IEnumerable<MailAddress> ToMailAddressesList { get ; }
+
+        /// <summary>
+        /// CC email addresses list
+        /// </summary>
+        IEnumerable<MailAddress> CcMailAddressesList { get; }
+
+        /// <summary>
+        /// BCC list email addresses.
+        /// </summary>
+        IEnumerable<MailAddress> BccMailAddressesList { get; }
+
+
+        /// <summary>
         /// Add a list of BCC email addresses the email to be sent to.
         /// </summary>
         /// <param name="bccMailAddresses">List of BCC email addresses to receive the email.</param>
@@ -98,6 +114,13 @@ namespace FluentEmailer.LJShole.EmailChannel.SMTP
         /// </summary>
         /// <param name="fromMailAddress">From email address for recepients to know where the email originated from.</param>
         /// <returns></returns>
-        IEmailMessage FromMailAddresses(MailAddress fromMailAddress);
+        IEmailMessage FromMailAddress(MailAddress fromMailAddress);
+
+        /// <summary>
+        /// Add a sender email address.
+        /// </summary>
+        /// <param name="senderMailAddress">Sender email address.</param>
+        /// <returns></returns>
+        IEmailMessage SenderMailAddress(MailAddress senderMailAddress);
     }
 }
