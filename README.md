@@ -1,6 +1,22 @@
 # FluentEmailer
 Fluent API to send emails in a .NET Core application using your own SMTP settings
 
+## V 1.1.1 Changes
+
+This change addresses an issue with setting the `Bcc` and `Cc` email addresses before this change. These were added onto the `To` email list.
+
+This change also includes a change to the `.FromMailAddresses` method; since an email can only originate from one email address, this method should be named accordingly i.e in singular form not plural.
+
+#### Usage (using string as body of email)
+```
+_fluentEmail
+    .UsingSMTPServer(hostName, portNumber, userName, password, sslRequired)
+    .Message("Email Subject", new List<MailAddress> { new(toEmail) }, new(userName, "Email Display Name"))
+    .FromMailAddress(new MailAddress(***userName***))             
+    .Body("Test body content")
+    .Send();
+```
+---
 ## V 1.1.0 Changes
 
 Future versions of the application / package will provide support for SendGrid, with this in  mind, I have introduced breaking changes which pave way for the coming support. In addition, the change aims to make using the package much more intuitive and seemless. We do still support dependency injection. Simply add sample code below in your program.cs and import the `FluentEmailer.LJShole` namespace in the program.cs file.
