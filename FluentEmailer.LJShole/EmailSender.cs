@@ -5,6 +5,9 @@ using FluentEmailer.LJShole.Interfaces;
 
 namespace FluentEmailer.LJShole
 {
+    /// <summary>
+    /// Sends the email composed. 
+    /// </summary>
     public class EmailSender : IEmailSender
     {
         private readonly string _hostServer;
@@ -13,7 +16,7 @@ namespace FluentEmailer.LJShole
         private readonly string _password;
         private readonly bool _sslRequired;
         private readonly MailMessage _message;
-        private NetworkCredential? _networkCredential;
+        private NetworkCredential _networkCredential;
 
         internal EmailSender(MailMessage message, string hostServer, string portNumber, string userName, string password, bool sslRequired)
         {

@@ -11,7 +11,6 @@ namespace FluentEmailer.LJShole
     {
         private ISMTPServer _smtpServer;
 
-
         /// <summary>
         /// Bootstraps the process of sending an email using your SMTP or IMAP server.
         /// </summary>

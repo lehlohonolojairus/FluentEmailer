@@ -27,6 +27,7 @@ namespace FluentEmailer.LJShole.EmailChannel.SMTP
         private MailAddress _replyToEmail;
         private Encoding _subjectEncoding = Encoding.UTF8;
         private MailAddress _fromMailAddress;
+        private MailAddress _senderMailAddress;
         private IEnumerable<Attachment> _attachments;
         private TransferEncoding _transferEncoding = TransferEncoding.Unknown;
         private MailAddressCollection _replyToEmails;
@@ -34,7 +35,23 @@ namespace FluentEmailer.LJShole.EmailChannel.SMTP
         private IEnumerable<MailAddress> _ccMailAddresses = new List<MailAddress>();
         private IEnumerable<MailAddress> _bccMailAddresses = new List<MailAddress>();
         private IEmailSender _emailSender;
-        internal EmailMessage(string subject, string hostServer, string portNumber, string userName, string password, bool sslRequired, IEnumerable<MailAddress> toEmailAddresses)
+
+        /// <summary>
+        /// To emal addresses list 
+        /// </summary>
+        public IEnumerable<MailAddress> ToMailAddressesList { get { return _toMailAddresses; } }
+
+        /// <summary>
+        /// CC email addresses list
+        /// </summary>
+        public IEnumerable<MailAddress> CcMailAddressesList { get { return _ccMailAddresses; } }
+
+        /// <summary>
+        /// BCC list email addresses.
+        /// </summary>
+        public IEnumerable<MailAddress> BccMailAddressesList { get { return _bccMailAddresses; } }
+
+        internal EmailMessage(string subject, string hostServer, string portNumber, string userName, string password, bool sslRequired, MailAddress senderMailAddress, IEnumerable<MailAddress> toEmailAddresses)
         {
             _hostServer = hostServer;
             _portNumber = portNumber;
@@ -43,6 +60,8 @@ namespace FluentEmailer.LJShole.EmailChannel.SMTP
             _sslRequired = sslRequired;
             _toMailAddresses = toEmailAddresses;
             _subject = subject;
+            _senderMailAddress = senderMailAddress;
+            _fromMailAddress = senderMailAddress;
         }
         /// <summary>
         /// Set the encoding of the body. If you are using UTF8, no need to set this value.
@@ -135,7 +154,7 @@ namespace FluentEmailer.LJShole.EmailChannel.SMTP
         /// </summary>
         /// <param name="fromMailAddress">From email address for recepients to know where the email originated from.</param>
         /// <returns></returns>
-        public IEmailMessage FromMailAddresses(MailAddress fromMailAddress)
+        public IEmailMessage FromMailAddress(MailAddress fromMailAddress)
         {
             if (fromMailAddress == null || string.IsNullOrEmpty(fromMailAddress.Address))
                 throw new ArgumentNullException(nameof(fromMailAddress));
@@ -143,7 +162,19 @@ namespace FluentEmailer.LJShole.EmailChannel.SMTP
             _fromMailAddress = fromMailAddress;
             return this;
         }
+        /// <summary>
+        /// Add a sender email address.
+        /// </summary>
+        /// <param name="senderMailAddress">Sender email address.</param>
+        /// <returns></returns>
+        public IEmailMessage SenderMailAddress(MailAddress senderMailAddress)
+        {
+            if (senderMailAddress == null || string.IsNullOrEmpty(senderMailAddress.Address))
+                throw new ArgumentNullException(nameof(senderMailAddress));
 
+            _senderMailAddress = senderMailAddress;
+            return this;
+        }
         /// <summary>
         /// Allows the adding of attachments on the email.
         /// </summary>
@@ -276,12 +307,13 @@ namespace FluentEmailer.LJShole.EmailChannel.SMTP
                 Priority = _priority,
                 BodyEncoding = _bodyEncoding,
                 SubjectEncoding = _subjectEncoding,
-                BodyTransferEncoding = _transferEncoding
+                BodyTransferEncoding = _transferEncoding,
+                Sender = _senderMailAddress,
             };
 
             _toMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
-            _ccMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
-            _bccMailAddresses?.ToList().ForEach(address => { message.To.Add(address); });
+            _ccMailAddresses?.ToList().ForEach(address => { message.CC.Add(address); });
+            _bccMailAddresses?.ToList().ForEach(address => { message.Bcc.Add(address); });
             _attachments?.ToList().ForEach(attachment => { message.Attachments.Add(attachment); });
 
             if (_replyToEmails != null && _replyToEmails.Count > 0)
