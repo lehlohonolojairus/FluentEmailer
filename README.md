@@ -3,7 +3,7 @@ Fluent API to send emails in a .NET Core application using your own SMTP setting
 
 ## V 1.1.1 Changes
 
-This change addresses an issue with setting the `Bcc` and `Cc` email addresses before this change. These were added onto the `To` email list.
+This change addresses an issue with setting the `Bcc` and `Cc` email addresses; these were added onto the `To` email list.
 
 This change also includes a change to the `.FromMailAddresses` method; since an email can only originate from one email address, this method should be named accordingly i.e in singular form not plural.
 
