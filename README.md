@@ -1,6 +1,8 @@
 # FluentEmailer
 Fluent API to send emails in a .NET Core application using your own SMTP settings
 
+<a href="https://www.buymeacoffee.com/hloni" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-blue.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
 ## V 1.1.1 Changes
 
 This change addresses an issue with setting the `Bcc` and `Cc` email addresses; these were added onto the `To` email list.
