@@ -114,7 +114,7 @@ This will allow you to inject the `IFluentEmail` interface which you can use you
                 .Send();
                 
                 
-# V 1.0.3 Changes
+## V 1.0.3 Changes
 
         new Mailer()
             .SetUpMessage()
